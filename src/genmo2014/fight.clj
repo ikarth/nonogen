@@ -114,3 +114,20 @@
   (map eval [x y z]))
 
 (reduce + (testfn {:x '(+ 1 5) :b 2 :y 3 :z 4}))
+
+((fn [x] (#(:range %) x)) {:range 3 :color :blue})
+
+(def t-fns {:range #(> % 2) :color #(= 3 %)})
+(def t-data {:range 3 :color 4})
+(((key (first t-data)) t-fns) ((key (first t-data)) t-data))
+((key (first t-fns)) t-fns)
+(filter
+ #(((key %) t-fns) (val %))
+ t-data)
+(map
+  #(((key %) t-fns) (val %))
+ t-data)
+
+ ( #(:range %2) t-fns {:range 1})
+
+

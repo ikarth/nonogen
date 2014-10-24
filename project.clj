@@ -7,7 +7,7 @@
                  [clj-wordnet "0.1.1-SNAPSHOT"]
                  ;[clj-wordnik "0.1.0-alpha1"]
                  ;[clj-wordnik "0.1.0-alpha1"]
-                 ;[instaparse "1.3.4"]
+                 [instaparse "1.3.4"]
                  [clojure-opennlp "0.3.2"]
                  [janiczek/markov "0.3.0"]
                  ;[sentimental "0.1.0-SNAPSHOT"]

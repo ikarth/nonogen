@@ -60,7 +60,7 @@
    })
 
 (def present-scene
-  {:tags {:range 9}
+  {:tags {:range 0}
    :actors [fighter-one fighter-two]
    }
   )
@@ -78,6 +78,13 @@
 
 (clojure.pprint/pprint (test-fight-action :text))
 
+(defn filter-by-criterion [predicates data]
+  (filter
+   #(((key %) predicates) (val %))
+   data))
+
+(filter-by-criterion (:criterion (first test-actions)) (:tags present-scene))
+
 ;; Go through the map of criterion, testing if they match the known info
 ;; Get a set of predicates, evaluate each to see if true...
 (defn filter-criterion [criterion world]
@@ -88,6 +95,8 @@
   [action-list]
   (filter #(filter-criterion (:criterion %1) #{:far}) action-list)
   )
+
+
 
 ;; Select an action with weighted random sampling
 (defn select-actions [action-list]
@@ -102,10 +111,13 @@
 
 (run-actions test-actions)
 
-(filter
- #(filter-criterion
-   (:criterion %1) #{:far})
- test-actions)
+
+
+
+;(filter
+;; #(filter-criterion
+;;   (:criterion %1) #{:far})
+; test-actions)
 
 
 (clojure.set/difference #{1 2 3} #{3 4 5})
@@ -117,8 +129,8 @@
 
 ((fn [x] (#(:range %) x)) {:range 3 :color :blue})
 
-(def t-fns {:range #(> % 2) :color #(= 3 %)})
-(def t-data {:range 3 :color 4})
+(def t-fns {:range #(> % 2) :color #(= :blue %)})
+(def t-data {:range 3 :color :blue})
 (((key (first t-data)) t-fns) ((key (first t-data)) t-data))
 ((key (first t-fns)) t-fns)
 (filter
@@ -130,4 +142,10 @@
 
  ( #(:range %2) t-fns {:range 1})
 
+
+
+
+
+;; Event
+;;
 

@@ -14,4 +14,8 @@
                  ;[clojure-nltk "2.0.3-clj-0"]
                  [rhyme-finder "0.1.0-SNAPSHOT"]
                  [bigml/sampling "3.0"]
-                 ])
+                 [incanter "1.5.5"]
+                 [org.clojure/data.generators "0.1.2"]
+                 [com.cemerick/pprng "0.0.2"]
+                 ]
+  :local-repo "../local-maven")

@@ -5,105 +5,6 @@
              [clojure.pprint]
              ))
 
-
-
-(def example-character {:id :id-example-character
-                        :name "El Cid"
-                        :tags {}})
-
-(def example-fight-scene {:actors []
-                          :tags {}
-                          :events []
-                          })
-
-(def example-action {:predicates {}
-                     :outcome nil
-                     :text nil})
-
-(def example-actions [{:predicates {:range #(<= 1 %)}
-                     :outcome nil
-                     :text "I run away from you."}
-                      {:predicates {:range #(>= 1 %)}
-                     :outcome nil
-                     :text "I run towards you."}
-                      ])
-
-;; TODO
-(def predicate-translations
-  {:range-min #(< (:range %1) %2)}
-    )
-
-;; TODO
-(defn interpert-predicates
-  "Takes a seq of predicate-labels, runs it against the list of translations,
-  returns the predicates."
-  [predicates])
-
-
-(defn filter-actions
-  "Return only the actions that are valid for the current event,
-  as determined by comparing the map of predicates to the event-state."
-  [actions event-state]
-  (filter (fn [an-action]
-           (reduce true?
-                   (map #(((key %) (:predicates an-action)) (val %)) (:tags event-state))
-           )
-           )
-        actions))
-
-(filter-actions example-actions {:tags {:range 1}})
-
-(defn run-action [action]
-  {:outcome (:outcome action)
-   :text (:text action)})
-
-(defn choose-action [actions event-state]
-  (run-action
-    (first ; TODO: change to actual sampling
-      (filter-actions actions event-state))))
-
-;(choose-action example-actions {:tags {:range 1}})
-
-(defn process-outcome [outcomes scene]
-  )
-
-
-
-
-
-
-
-(def t-fns {:range #(> % 2) :color #(= :blue %)})
-(def t-data {:range 3 :color :blue})
-(filter
- #(((key %) t-fns) (val %))
- t-data)
-
-(defn filter-by-criterion [predicates data]
-  (filter
-   #(((key %) predicates) (val %))
-   data))
-
-(map :predicates example-actions)
-
-(filter
- #(((key %) {:range (fn [x] (< 1 x))}) (val %))
- {:range 2})
-
-(filter
- #(((key %) (first (map :predicates example-actions))) (val %))
- {:range 2})
-
-
-(def example-acts [{:predicates {:range #(= 1 %)}}
-          {:predicates {:range #(= 2 %)}}
-          ])
-
-(def example-state {:tags {:range 1}})
-
-
-
-
 (def a-story
   {:characters [{:name "Scheherazade" :tags {:character-storyteller true}} {:name "Shahryar"}]
    :event-queue [:event-storytelling-begin]
@@ -173,7 +74,9 @@
 
 
 
-(defn process-outcomes [story-module]
+(defn process-outcomes
+  "Go through the outcome-queue of the story module and execute the outcomes."
+  [story-module]
   (let [outcomes (:outcome-queue story-module)
         eq (into (flatten (map (fn [o] (:events o)) outcomes))
                  (rest (:event-queue story-module)))
@@ -184,24 +87,17 @@
         :outcome-queue nil)
       :text-queue texts)))
 
-(defn process-texts [story-module]
-  (print (apply str (flatten (:text-queue story-module))))
+(defn process-texts
+  "Takes the story-module and goes through its queue of texts to be output
+  and process them. The texts themselves can range from straight strings
+  to complex constructs."
+  [story-module]
+  (print ;; TODO: actually implement something useful here
+   (apply str (flatten (:text-queue story-module))))
   story-module)
-
-(process-events a-story storytelling-actions)
-
-(print "hello\n\n")
 
 (defn engine-loop [a-story actions]
   ((comp process-texts process-outcomes process-events) a-story actions))
-
-(engine-loop a-story storytelling-actions)
-
-(defn s-loop [x] (engine-loop x storytelling-actions))
-
-(s-loop (s-loop a-story))
-
-(s-loop (s-loop (s-loop (s-loop (s-loop (s-loop a-story))))))
 
 (defn tell-story [length]
   (loop [a storytelling-actions
@@ -221,8 +117,8 @@
 ;(story-engine a-story storytelling-actions)
 
 
-(process-texts {:text-queue (seq '("test"))})
+;(process-texts {:text-queue (seq '("test"))})
 
-(conj '(1 2 3 4) '(5 6))
+;(conj '(1 2 3 4) '(5 6))
 
 ;(clojure.pprint/pprint (str (flatten (:test {:test 1}))))

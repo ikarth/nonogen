@@ -14,11 +14,6 @@
                              [stream :as sample-stream])
              ;(bigml.sampling.test [stream :as stream-test])
              [rhyme-finder.core]
-             [incanter [core stats charts]]
-             [incanter.stats]
-             [clojure.data.generators]
-             [cemerick.pprng :as rng]
-             ;[com.climate.prng.generators.mersenne-twister :as mt]
        )
   (:use [clojure.pprint]
         [clojure.java.io]
@@ -45,19 +40,3 @@
 ;(map :lemma (clj-wordnet.core/synonyms (first (wordnet "dog" :noun))))
 
 ;(use 'markov.core)
-
-;(println (seq (.getURLs (java.lang.ClassLoader/getSystemClassLoader))))
-
-(cemerick.pprng/int (cemerick.pprng/rng 9989779))
-
-
-(def example-uuid (clojure.data.generators/uuid))
-
-(defn rand-seq [seed]
-  (let [r (java.util.Random. seed)]
-    (repeatedly #(binding [clojure.data.generators/*rnd* r]
-                  (inc (clojure.data.generators/uniform 0 10))))))
-
-(take 10 (rand-seq 8))
-
-(incanter.stats/sample (take 10 (rand-seq 8)) :size 2 :replacement :false)

@@ -73,7 +73,6 @@
     ))
 
 
-
 (defn process-outcomes
   "Go through the outcome-queue of the story module and execute the outcomes."
   [story-module]
@@ -106,7 +105,6 @@
     (if (< i length)
       (recur a (engine-loop s a) (inc i))
       s)))
-
 
 (tell-story 9)
 

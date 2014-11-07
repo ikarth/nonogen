@@ -7,7 +7,7 @@
              [clj-wordnet.core :as wordnet]
              [markov.core]
              [genmo2014.clean :as clean]
-             ;[clj-wordnet.similarity.algo.hso :as hso]
+             [clj-wordnet.similarity.algo.hso :as hso]
              ;[bigml.sampling.simple :as sample-simple]
              (bigml.sampling [simple :as sample-simple]
                              [reservoir :as sample-reservoir]
@@ -18,6 +18,9 @@
              [incanter.stats]
              [clojure.data.generators]
              [cemerick.pprng :as rng]
+             [caesium.crypto.generichash]
+             [caesium.util]
+             ;[org.clojars.ikarth.libsodium]
              ;[com.climate.prng.generators.mersenne-twister :as mt]
        )
   (:use [clojure.pprint]
@@ -48,10 +51,9 @@
 
 ;(println (seq (.getURLs (java.lang.ClassLoader/getSystemClassLoader))))
 
-(cemerick.pprng/int (cemerick.pprng/rng 9989779))
+;(cemerick.pprng/int (cemerick.pprng/rng 9989779))
 
-
-(def example-uuid (clojure.data.generators/uuid))
+;(def example-uuid (clojure.data.generators/uuid))
 
 (defn rand-seq [seed]
   (let [r (java.util.Random. seed)]
@@ -60,4 +62,29 @@
 
 (take 10 (rand-seq 8))
 
-(incanter.stats/sample (take 10 (rand-seq 8)) :size 2 :replacement :false)
+(def empty-string-digest
+  (caesium.util/unhexify "786a02f742015903c6c6fd852552d272912f4740e15847618a86e217f71f5419d25e1031afee585313896444934eb04b903a685b1448b755d56f701afe9be2ce"))
+
+(byte-array [90])
+;(caesium.crypto.generichash/blake2b (byte-array [90]))
+;(caesium.crypto.generichash/blake2b (byte-array []))
+
+
+ ;(caesium.util/unhexify "4884256d056fb76f83f10ab85c127682d447d126d99dee526883488f57951fffb576a16d8a7fd391420e23b7c0cf14b413878de095dc3d84bcaecba0bc657c77")
+ ;       )
+
+;(incanter.stats/sample (take 10 (rand-seq 8)) :size 2 :replacement :false)
+(println (. System getProperty "java.library.path"))
+
+(defn xors [max-x max-y]
+  (for [x (range max-x) y (range max-y)]
+    [x y (bit-xor x y)]))
+
+(xors 4 4)
+
+(def frame (java.awt.Frame.))
+
+(for [meth (.getMethods java.awt.Frame)
+      :let [name (.getName meth)]
+      :when (re-find #"Vis" name)]
+  name)

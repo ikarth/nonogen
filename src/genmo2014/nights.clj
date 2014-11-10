@@ -6,13 +6,29 @@
 ;;;;; Generators to output stories
 ;;;;;
 
-;; Process story
+;; --- Process story ---
 ;; Passed a story (& maybe the storyon list?)
 ;;   Call Process Event Queue
 ;;   Call Process Effects
 ;; Check the state of the story
 ;;   If the story's state includes an exit command, return (with :generator [] set appropreately)
 ;;   Otherwise, recur
+
+(defn exit-state [story-generator]
+  (let [exit (:exit (:state story-generator))]
+    (case exit
+      :outward nil
+      :inplace story-generator
+      :inward (into [] story-generator (:subgenerator (:state story-generator))) ;todo: other generator goes here
+      :forward (:inward (:state story-generator)))))
+
+(defn story [story-generator]
+  (let [exit (:exit (:state story-generator))]
+    (if exit
+      {:output (:output-buffer (:state story-generator))
+       :generator (exit-state story-generator)
+       :feedback nil})))
+
 
 ;; --- Process Event Queue ---
 ;; Called with the story-generator
@@ -48,17 +64,14 @@
 
     ))
 
-(defn story [story-generator]
-  {:output "And then she told a story. "
-   :generator story-generator
-   :feedback nil
-   })
+
 
 (defn make-story []
   (gens/make-generator
    {:state {:characters []
             :scenes []
             :events []
+            :output []
             }
     :generator (fn [g] (story g))}))
 

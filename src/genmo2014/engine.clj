@@ -1,7 +1,7 @@
 (ns genmo2014.engine
-   (:require (bigml.sampling [simple :as sample-simple]
-                             [reservoir :as sample-reservoir]
-                             [stream :as sample-stream])
+   (:require ;(bigml.sampling [simple :as sample-simple]
+             ;                [reservoir :as sample-reservoir]
+             ;                [stream :as sample-stream])
              [clojure.pprint]
              ))
 

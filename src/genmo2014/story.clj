@@ -3,7 +3,11 @@
              ))
 
 
+;;;
+;;; Predicates
+;;;
 
+(def example-predicate-list [:current-character-is-storyteller :test])
 
 (def predicate-conversions
   {:current-character-is-storyteller #(= (:storyteller %) (:current-character %))
@@ -11,35 +15,17 @@
 
    })
 
-(def example-predicate-list [:current-character-is-storyteller :test])
-
 (defn expand-predicates [predicates conversions]
   (map
    (fn [pred]
      (loop [p pred]
-       (if (fn? p)
-         p
-         (recur (p conversions)))))
+       (if (fn? p) p (recur (p conversions)))))
    predicates))
 
-(vector? (first {:one 1}))
 
-(if (fn? :one)
-  true
-  false)
-
-;(map
-; (fn [p] p)
-; predicate-conversions)
-
-(let [predicate (first example-predicate-list)]
-  (if (fn? predicate)
-    predicate
-    (predicate predicate-conversions)))
-
-(expand-predicates
- example-predicate-list
- predicate-conversions)
+;;;
+;;; Stories
+;;;
 
 (defn valid? [story]
   true)
@@ -54,15 +40,13 @@
   {:characters [{:name "Scheherazade" :tags {:stories [] :gender :female}} {:name "Shahryar" :tags {:gender :male}}]
    :scenes [{:current-character "Scheherazade" :scene :storytelling :storyteller "Scheherazade"}]
    :output []
+   :places []
    })
 
 (def events-list
   [{:predicates {:scene #(= % :storytelling)}
     :outcome []
     }])
-
-(defn make-event [])
-;(defn make-action [])
 
 (defn make-output-text [text]
   text)
@@ -81,7 +65,12 @@
         ]
     (merge scene-tags character-tags)))
 
-(get-tags a-story)
+;(get-tags a-story)
+
+;;;
+;;; Storylets
+;;;
+
 
 (defn make-storylet [[predicates outcome]]
   {:name nil
@@ -113,9 +102,8 @@
     }])
 
 
-
 (defn storylet-active?
-  "Filter the storylet list for only the ones valid in the currrent state."
+  "Is the storylet valid in the current story state?"
   [story storylet]
   (let [tags (get-tags story)]
     (not (some false?
@@ -123,29 +111,10 @@
                 (fn [p] (p tags))
                 (:predicates storylet))))))
 
-(defn filter-storylets [story storylets]
+(defn filter-storylets
+  "Filter the storylet list for only the ones valid in the currrent state."
+  [story storylets]
   (filter #(storylet-active? story %1) storylets))
 
-(map
- (fn [p] (p (get-tags a-story)))
- (:predicates (first example-storylets)))
-
-(first example-storylets)
-
-((first (:predicates (first example-storylets)))
-  (get-tags a-story))
-
-(storylet-active? a-story (first example-storylets))
-(filter-storylets a-story example-storylets)
-
-(defn process [])
-
-;(defn make-effect [])
-
-(defn valid-effect? [effect]
-  true)
-
-;(defn apply-effect [state effect]
-;  (if (valid-effect? effect)
-;    (effect state event)
-;    state))
+;(storylet-active? a-story (first example-storylets))
+;(filter-storylets a-story example-storylets)

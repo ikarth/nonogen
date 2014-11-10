@@ -39,6 +39,7 @@
   [action]
   (:outcome action))
 
+;(perform-action (first storytelling-actions))
 
 (defn select-action
   "Given a map of tags (distilled from the current state) and a vector of actions,

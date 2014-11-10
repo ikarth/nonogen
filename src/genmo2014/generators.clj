@@ -24,9 +24,10 @@
 ;; - Run its generator to get the output.
 ;;     - Possible results:
 ;;       - OUTWARDS: This generator is finished, remove it from the stack. (Generator returns nil)
-;;       - CONTINUE: This generator isn't finished, run it again. (Generator returns itself)
+;;       - IN-PLACE: This generator isn't finished, run it again. (Generator returns itself)
 ;;       - INWARDS: This generator has created a subgenerator, put that
-;;                  on top of the stack. (Generator returns new generator)
+;;                  on top of the stack. (Generator returns new generator + itself)
+;;       - FORWARDS: Replace this generator with another generator. (Generator returns just a new generator)
 ;; - If it had feedback, send that feedback upstream.
 ;; - Create the new stack:
 ;;   - Outcome is the generator returned by running the generator.
@@ -57,8 +58,7 @@
 
 (defn insert [generator-stack addition]
   (assoc generator-stack :generator-stack
-    (conj (get generator-stack :generator-stack) addition)))
-
+    (into-conj (get generator-stack :generator-stack) addition)))
 
 (defn make-generator-stack []
   {:generator-stack []

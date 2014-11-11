@@ -183,15 +183,24 @@
 ;; Return the result of the changes
 
 (defn call-effects
-  "Processes an effects list and applies the changes to the story. Takes a
-story (to be returned when altered) and an ordered vector of effects, and
-returns the new story. Effects should be keyworded vectors within the
-effects-list vector."
+  "Processes an effects list and applies the changes to the story. Takes
+a story (to be returned when altered) and an ordered vector of effects,
+and returns the new story.
+  The effects-list is a vector of vectors. Each subvector is an effect,
+and should start with a function or a keyword that reduces to a function
+via the story-effects map. The rest of the vector is passed to the fn as
+the effect's argument."
   [story effects-list]
   (reduce
-   #(((first %2)
-      (story-effects %1))
-     (rest %2))
+   (fn [a-story effect-vec]
+     (if (empty? effect-vec) ; skip empty vectors
+       a-story
+       (let [effect-fn (if (keyword? (first effect-vec)) ; if it's a keyword, grab it from the map
+                         (get (story-effects a-story) (first effect-vec)) ; <- note that story-effects is scoped from above
+                         (first effect-vec))]
+         (if (fn? effect-fn) ; if it isn't a function (from, say, a failed effects-map lookup) then bail and return the unmodified story
+           (apply effect-fn (rest effect-vec))
+           a-story))))
    story
    effects-list))
 
@@ -241,3 +250,21 @@ example-story
 ;(map #(((key %1) (story-effects example-story)) (val %1)) {:output "test"})
 
 (call-effects example-story [[:output "test"] [:output "test2"]])
+
+(defn test-effect [state]
+  {:a (fn [x] (+ x state))
+   :b (fn [x] (- x state))})
+
+(defn call-test
+  []
+  (reduce
+   (fn [story effect-vec]
+     (let [effect-fn (first effect-vec)]
+       (apply (if (keyword? effect-fn)
+                (get (test-effect story) effect-fn)
+                effect-fn)
+              (rest effect-vec))))
+   9
+   [[:b 7][:a 5]]))
+
+(call-test)

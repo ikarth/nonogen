@@ -64,28 +64,6 @@
   {:generator-stack []
         :output []})
 
-;;;
-;;; Generator Manager
-;;;
-
-;; I'm still not sure if doing it this way helps at all...
-(defn make-generator-manager
-  ([]
-   (make-generator-manager
-       {:generator-stack []
-        :output []}))
-  ([{:keys [generator-stack output]}]
-   {:generator-stack generator-stack
-    :output output
-    :process-gen (fn [] (make-generator-manager (process {:generator-stack generator-stack, :output output})))
-    :insert (fn [a] (make-generator-manager (insert {:generator-stack generator-stack, :output output} a)))
-   }))
-
-(defn process-generator [gen]
-  ((:process-gen (make-generator-manager example-generator-stack))))
-
-
-
 
 
 
@@ -135,3 +113,23 @@
 
 ;(process-generator (make-generator-manager example-generator-stack))
 ;(process (make-generator-manager example-generator-stack))
+
+;;;
+;;; Generator Manager
+;;;
+
+;; I'm still not sure if doing it this way helps at all...
+(defn make-generator-manager
+  ([]
+   (make-generator-manager
+       {:generator-stack []
+        :output []}))
+  ([{:keys [generator-stack output]}]
+   {:generator-stack generator-stack
+    :output output
+    :process-gen (fn [] (make-generator-manager (process {:generator-stack generator-stack, :output output})))
+    :insert (fn [a] (make-generator-manager (insert {:generator-stack generator-stack, :output output} a)))
+   }))
+
+(defn process-generator [gen]
+  ((:process-gen (make-generator-manager example-generator-stack))))

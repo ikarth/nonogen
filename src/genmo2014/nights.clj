@@ -1,6 +1,7 @@
 (ns genmo2014.nights
    (:require [clojure.pprint]
-             [genmo2014.generators :as gens]))
+             [genmo2014.generators :as gens]
+             [genmo2014.storyon]))
 
 ;;;;;
 ;;;;; Generators to output stories
@@ -8,6 +9,7 @@
 
 ;; --- Process story ---
 ;; Passed a story (& maybe the storyon list?)
+;;  Figure out the current tag set
 ;;   Call Process Event Queue
 ;;   Call Process Effects
 ;; Check the state of the story
@@ -23,11 +25,14 @@
       :forward (:inward (:state story-generator)))))
 
 (defn story [story-generator]
-  (let [exit (:exit (:state story-generator))]
+  (let [story-gen (genmo2014.storyon/generate-story story-generator)]
+    (let [exit (:exit (:state story-gen))]
     (if exit
-      {:output (:output-buffer (:state story-generator))
-       :generator (exit-state story-generator)
-       :feedback nil})))
+      {:output (:output-buffer (:state story-gen))
+       :generator (exit-state story-gen)
+       :feedback nil}
+      ;story-gen;(recur story-gen)
+      ))))
 
 
 ;; --- Process Event Queue ---
@@ -58,13 +63,15 @@
 ;; - Alter state (Most common effect, with many different varities.)
 ;; Effects can also call other effects.
 
+;; --- Get Tags ---
+;; Go through all the structures in the story-state
+;;   Get their :tags
+;;   Merge them into one unified map
+;;   Return that
 
-(defn process-event [story-generator]
-  (let [events (:events (:state story-generator))]
-
-    ))
-
-
+;(defn process-event [story-generator]
+;  (let [events (:events (:state story-generator))]
+;    ))
 
 (defn make-story []
   (gens/make-generator

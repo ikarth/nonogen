@@ -21,20 +21,25 @@
   ([{:keys [predicates result]}]
    {:name nil
     :predicates predicates
-    :outcome result}))
+    :result result}))
 
 (def example-storyons
   [(make-storyon
    {:predicates [:current-character-is-storyteller]
-    :result [(format-output "So she said, \"It is related, O august king, that...\" ")]})
+    :result [[:output "So she said, \"It is related, O august king, that...\" "]]})
    (make-storyon
    {:predicates [:current-character-is-storyteller]
-    :result [(format-output "Then she ended, saying, \"But there is another tale which is more marvelous still.\"\n")
-             [:exit :outward]
+    :result [[:output "Then she ended, saying, \"But there is another tale which is more marvelous still.\"\n"]
+             ;[:exit :outward]
              ]})
    (make-storyon
    {:predicates [:current-character-is-storyteller]
-    :result [(format-output "And she told them a story. ")]})])
+    :result [[:output "And she told them a story. "]]})
+   (make-storyon
+   {:predicates []
+    :result [[:output "And then debug text was printed. "]]})
+
+   ])
 
 ;;;
 ;;; Predicates
@@ -62,6 +67,8 @@
 ;;;
 
 (defn filter-storyons [storyon-deck tags]
+  (clojure.pprint/pprint "(filter-storyons)")
+  (clojure.pprint/pprint storyon-deck)
   storyon-deck) ;todo
 
 (defn select-storyons [storyon-deck tags]
@@ -97,12 +104,30 @@
 ;; Map across the storyons, building a vector of their effects
 ;; Return the vector of effects
 
-(defn events-to-effects [story storyon-deck]
+
+;; - Get current tags (includes tags for top event on queue)
+;; - Filter the storyon-deck via the tags
+;; - Select a storyon or storyons, create a vector of the chosen one(s)
+;; - map #(get % :result) against the vector of selected storyons
+;; TODO: - process the map for additional effects (like auto-popping the queue unlesss specifically surpressed)
+;; - return the resulting vector of effects
+
+(defn events-to-effects
+"  Takes a story and a deck of storyons and processes the story's event queue,
+returning the vector of effects of the first event in the queue and popping
+that event off the queue."
+  [story storyon-deck]
+  (let [return-value
   (let [tags (get story :tags)] ;todo: properly implement getting tags
-    (map #(get % :result)
-         (select-storyons
-          (filter-storyons storyon-deck tags)
-          tags))))
+    (reduce
+     #(into %1 (get %2 :result))
+     []
+     (select-storyons
+      (filter-storyons storyon-deck tags)
+                      tags)))]
+    (clojure.pprint/pprint "(events-to-effects)")
+    (clojure.pprint/pprint return-value)
+    return-value))
 
 ;(defn process-events
 ;  "Takes the story-module and processes the first event in the queue.
@@ -137,12 +162,6 @@
 ;;; Effects
 ;;;
 
-;; --- Process the Effects ---
-;; Called with the argument of the story-generator
-;; Take the vector of effects
-;; Go through the vector of effects, applying their effects in order.
-;; Return the result of the changes
-
 ;; --- Effects ---
 ;; - Pop Event Queue / Don't Pop Event Queue (determines if the event immidiately repeats)
 ;; - Replace Event (put the popped event back in the queue, to eventually run again)
@@ -160,8 +179,11 @@
 
 (defn story-effects [story]
   {:output (defn effect-output [output-text]
-             (let [output-buffer (:output (:state story))]
-               (assoc-in story [:state :output] (into output-buffer output-text))))
+             (let [output-buffer (if (empty? (:output (:state story)))
+                                   []
+                                   (:output (:state story)))]
+               (println (str output-buffer "-*-" output-text))
+               (assoc-in story [:state :output] (conj output-buffer output-text))))
    :pop-event nil
    :surpress-pop nil
    :insert-event (defn insert-event [event-to-insert]
@@ -191,6 +213,7 @@ and should start with a function or a keyword that reduces to a function
 via the story-effects map. The rest of the vector is passed to the fn as
 the effect's argument."
   [story effects-list]
+  (clojure.pprint/pprint "(call-effects)")
   (reduce
    (fn [a-story effect-vec]
      (if (empty? effect-vec) ; skip empty vectors
@@ -198,18 +221,54 @@ the effect's argument."
        (let [effect-fn (if (keyword? (first effect-vec)) ; if it's a keyword, grab it from the map
                          (get (story-effects a-story) (first effect-vec)) ; <- note that story-effects is scoped from above
                          (first effect-vec))]
-         (if (fn? effect-fn) ; if it isn't a function (from, say, a failed effects-map lookup) then bail and return the unmodified story
+         (clojure.pprint/pprint effect-fn)
+         (println (str "first: " (first effect-vec)))
+         (clojure.pprint/pprint  (if (fn? effect-fn) ; if it isn't a function (because of, say, a failed effects-map lookup) then bail and return the unmodified story
+           (apply effect-fn (rest effect-vec))
+                                   "Not a function"))
+
+         (if (ifn? effect-fn) ; if it isn't a function (because of, say, a failed effects-map lookup) then bail and return the unmodified story
            (apply effect-fn (rest effect-vec))
            a-story))))
    story
    effects-list))
+
+(defn call-effects
+  "Processes an effects list and applies the changes to the story. Takes
+a story (to be returned when altered) and an ordered vector of effects,
+and returns the new story.
+  The effects-list is a vector of vectors. Each subvector is an effect,
+and should start with a function or a keyword that reduces to a function
+via the story-effects map. The rest of the vector is passed to the fn as
+the effect's argument."
+  [story effects-list]
+  (clojure.pprint/pprint "(call-effects)")
+   (loop [s story
+          el effects-list]
+     (if (empty? el)
+       s
+       (let [first-effect (first el)
+             head (first first-effect)
+             effect-fn (if (keyword? head) (get (story-effects s) head) head)]
+         (println "--------------")
+         (clojure.pprint/pprint el)
+         (clojure.pprint/pprint first-effect)
+         (clojure.pprint/pprint head)
+         (clojure.pprint/pprint (effect-fn "test"))
+         (clojure.pprint/pprint  (if (ifn? effect-fn) ; if it isn't a function (because of, say, a failed effects-map lookup) then bail and return the unmodified story
+           (apply effect-fn (rest first-effect))
+                                   "Not a function"))
+         (if (ifn? effect-fn)
+           (recur (apply effect-fn (rest first-effect)) (rest el))
+           (recur s (rest el)))))))
 
 ;;;
 ;;; Story Generation
 ;;;
 
 (defn generate-story [story-generator]
-  (call-effects story-generator (events-to-effects story-generator example-storyons)))
+  (call-effects story-generator
+                (events-to-effects story-generator example-storyons)))
 
 ;;;
 ;;; Sketching
@@ -224,20 +283,27 @@ the effect's argument."
             }
     :generator nil}))
 
-(def example-story (assoc (make-story)
-  :state {:characters [{:name "Scheherazade" :tags {:stories [] :gender :female}} {:name "Shahryar" :tags {:gender :male}}]
+(def example-story
+  (merge-with
+   #(merge %1 %2)
+   (make-story)
+   {:state {:characters [{:name "Scheherazade" :tags {:stories [] :gender :female}} {:name "Shahryar" :tags {:gender :male}}]
           :scenes [{:current-character "Scheherazade" :scene :storytelling :storyteller "Scheherazade"}]
-          }))
+          }}))
 
 example-story
-;(generate-story example-story)
+(println "-----------------------------")
+(println "-----------------------------")
+(println "-----------------------------")
+(clojure.pprint/pprint "Running test...")
+(generate-story example-story)
 
 
 (def example-predicate-list [:current-character-is-storyteller :test [:vector "test"]])
-(expand-predicates example-predicate-list predicate-conversions)
+;(expand-predicates example-predicate-list predicate-conversions)
 
 
-((:output (story-effects example-story)) "Test")
+;((:output (story-effects example-story)) ["Test"])
 
 (def example-story  {:state {:characters []
             :scenes []
@@ -249,11 +315,11 @@ example-story
 ;((:output (story-effects example-story)) "test")
 ;(map #(((key %1) (story-effects example-story)) (val %1)) {:output "test"})
 
-(call-effects example-story [[:output "test"] [:output "test2"]])
+;(call-effects example-story [[:output "test"] [:output "test2"]])
 
 (defn test-effect [state]
-  {:a (fn [x] (+ x state))
-   :b (fn [x] (- x state))})
+  {:a (fn [x] (println "A") (+ x state))
+   :b (fn [x] (println "B" )(- x state))})
 
 (defn call-test
   []
@@ -267,4 +333,4 @@ example-story
    9
    [[:b 7][:a 5]]))
 
-(call-test)
+;(call-test)

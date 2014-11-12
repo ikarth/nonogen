@@ -76,26 +76,26 @@
 ;;; Sketching
 ;;;
 
-(def example-story (assoc (make-story)
-  :state {:characters [{:name "Scheherazade" :tags {:stories [] :gender :female}} {:name "Shahryar" :tags {:gender :male}}]
-          :scenes [{:current-character "Scheherazade" :scene :storytelling :storyteller "Scheherazade"}]
-          :output []
-          }))
-example-story
+;(def example-story (assoc (make-story)
+;  :state {:characters [{:name "Scheherazade" :tags {:stories [] :gender :female}} {:name "Shahryar" :tags {:gender :male}}]
+;;          :scenes [{:current-character "Scheherazade" :scene :storytelling :storyteller "Scheherazade"}]
+;          :output []
+;          }))
+;example-story
 
 
 
-((get example-story :generator) example-story)
-(genmo2014.storyon/generate-story example-story)
+;((get example-story :generator) example-story)
+;(genmo2014.storyon/generate-story example-story)
 
 
-(def gen-stack (genmo2014.generators/make-generator-stack))
-(gens/insert gen-stack example-story)
-(gens/process (gens/insert gen-stack example-story))
-(gens/process (gens/insert (gens/insert gen-stack example-story) example-story))
-(gens/process (gens/process (gens/insert (gens/insert gen-stack example-story) example-story)))
+;(def gen-stack (genmo2014.generators/make-generator-stack))
+;(gens/insert gen-stack example-story)
+;(gens/process (gens/insert gen-stack example-story))
+;(gens/process (gens/insert (gens/insert gen-stack example-story) example-story))
+;(gens/process (gens/process (gens/insert (gens/insert gen-stack example-story) example-story)))
 
-(nth (iterate gens/process (gens/insert gen-stack example-story)) 15)
+;(nth (iterate gens/process (gens/insert gen-stack example-story)) 15)
 
 ;(clojure.pprint/pprint (nth (iterate gens/process (gens/insert gen-stack example-story)) 15))
 

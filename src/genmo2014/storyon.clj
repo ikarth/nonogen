@@ -67,8 +67,6 @@
 ;;;
 
 (defn filter-storyons [storyon-deck tags]
-  (clojure.pprint/pprint "(filter-storyons)")
-  (clojure.pprint/pprint storyon-deck)
   storyon-deck) ;todo
 
 (defn select-storyons [storyon-deck tags]
@@ -117,45 +115,11 @@
 returning the vector of effects of the first event in the queue and popping
 that event off the queue."
   [story storyon-deck]
-  (let [return-value
   (let [tags (get story :tags)] ;todo: properly implement getting tags
     (reduce
      #(into %1 (get %2 :result))
      []
-     (select-storyons
-      (filter-storyons storyon-deck tags)
-                      tags)))]
-    (clojure.pprint/pprint "(events-to-effects)")
-    (clojure.pprint/pprint return-value)
-    return-value))
-
-;(defn process-events
-;  "Takes the story-module and processes the first event in the queue.
-;  Returns a seq with the outcomes."
-;   [story-module actions]
-;   (let [event-queue (:event-queue story-module)
-;         event (first event-queue)
-;         result (remove nil? (map (fn [char]
-;                      (let [state-tags (conj {:event event} (:tags char))]
-;                         (select-action state-tags actions)))
-;                    (:characters story-module)))
-;         performed (map perform-action result)]
-;    (assoc story-module :outcome-queue performed)
-;    ))
-
-
-;(defn process-outcomes
-;  "Go through the outcome-queue of the story module and execute the outcomes."
-;  [story-module]
-;  (let [outcomes (:outcome-queue story-module)
-;        eq (into (flatten (map (fn [o] (:events o)) outcomes))
-;                 (rest (:event-queue story-module)))
-;        texts (map (fn [o] (:text o)) outcomes)]
-;    (assoc
-;      (assoc
-;        (assoc story-module :event-queue eq)
-;        :outcome-queue nil)
-;      :text-queue texts)))
+     (select-storyons (filter-storyons storyon-deck tags) tags))))
 
 
 ;;;
@@ -182,7 +146,6 @@ that event off the queue."
              (let [output-buffer (if (empty? (:output (:state story)))
                                    []
                                    (:output (:state story)))]
-               (println (str output-buffer "-*-" output-text))
                (assoc-in story [:state :output] (conj output-buffer output-text))))
    :pop-event nil
    :surpress-pop nil
@@ -213,52 +176,14 @@ and should start with a function or a keyword that reduces to a function
 via the story-effects map. The rest of the vector is passed to the fn as
 the effect's argument."
   [story effects-list]
-  (clojure.pprint/pprint "(call-effects)")
-  (reduce
-   (fn [a-story effect-vec]
-     (if (empty? effect-vec) ; skip empty vectors
-       a-story
-       (let [effect-fn (if (keyword? (first effect-vec)) ; if it's a keyword, grab it from the map
-                         (get (story-effects a-story) (first effect-vec)) ; <- note that story-effects is scoped from above
-                         (first effect-vec))]
-         (clojure.pprint/pprint effect-fn)
-         (println (str "first: " (first effect-vec)))
-         (clojure.pprint/pprint  (if (fn? effect-fn) ; if it isn't a function (because of, say, a failed effects-map lookup) then bail and return the unmodified story
-           (apply effect-fn (rest effect-vec))
-                                   "Not a function"))
-
-         (if (ifn? effect-fn) ; if it isn't a function (because of, say, a failed effects-map lookup) then bail and return the unmodified story
-           (apply effect-fn (rest effect-vec))
-           a-story))))
-   story
-   effects-list))
-
-(defn call-effects
-  "Processes an effects list and applies the changes to the story. Takes
-a story (to be returned when altered) and an ordered vector of effects,
-and returns the new story.
-  The effects-list is a vector of vectors. Each subvector is an effect,
-and should start with a function or a keyword that reduces to a function
-via the story-effects map. The rest of the vector is passed to the fn as
-the effect's argument."
-  [story effects-list]
-  (clojure.pprint/pprint "(call-effects)")
    (loop [s story
           el effects-list]
-     (if (empty? el)
+     (if (empty? el) ;empty vector? we're done
        s
        (let [first-effect (first el)
              head (first first-effect)
-             effect-fn (if (keyword? head) (get (story-effects s) head) head)]
-         (println "--------------")
-         (clojure.pprint/pprint el)
-         (clojure.pprint/pprint first-effect)
-         (clojure.pprint/pprint head)
-         (clojure.pprint/pprint (effect-fn "test"))
-         (clojure.pprint/pprint  (if (ifn? effect-fn) ; if it isn't a function (because of, say, a failed effects-map lookup) then bail and return the unmodified story
-           (apply effect-fn (rest first-effect))
-                                   "Not a function"))
-         (if (ifn? effect-fn)
+             effect-fn (if (keyword? head) (get (story-effects s) head) head)] ; if it's a keyword, grab it from the map; <- note that story-effects is scoped from above
+         (if (ifn? effect-fn) ; if it isn't a function (because of, say, a failed effects-map lookup) then bail and return the unmodified story
            (recur (apply effect-fn (rest first-effect)) (rest el))
            (recur s (rest el)))))))
 

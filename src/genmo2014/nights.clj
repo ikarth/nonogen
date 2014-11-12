@@ -27,12 +27,20 @@
 (defn story [story-generator]
   (let [story-gen (genmo2014.storyon/generate-story story-generator)]
     (let [exit (:exit (:state story-gen))]
-    (if exit
-      {:output (:output-buffer (:state story-gen))
-       :generator (exit-state story-gen)
+      (if exit
+        {:output (:output (:state story-gen))
+         :generator (exit-state story-gen)
+         :feedback nil}
+        story-gen;(recur story-gen)
+      )
+      (println story-gen)
+      {:output (:output (:state story-gen))
+       :generator {};(exit-state story-gen)
        :feedback nil}
-      story-gen;(recur story-gen)
-      ))))
+
+      )))
+
+
 
 ;; --- Get Tags ---
 ;; Go through all the structures in the story-state
@@ -83,7 +91,11 @@ example-story
 
 (def gen-stack (genmo2014.generators/make-generator-stack))
 (gens/insert gen-stack example-story)
-;(gens/process (gens/insert gen-stack example-story))
-;(nth (iterate gens/process (gens/insert gen-stack example-story)) 15)
+(gens/process (gens/insert gen-stack example-story))
+(gens/process (gens/insert (gens/insert gen-stack example-story) example-story))
+(gens/process (gens/process (gens/insert (gens/insert gen-stack example-story) example-story)))
+
+(nth (iterate gens/process (gens/insert gen-stack example-story)) 15)
+
 ;(clojure.pprint/pprint (nth (iterate gens/process (gens/insert gen-stack example-story)) 15))
 

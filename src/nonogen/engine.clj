@@ -1,4 +1,4 @@
-(ns genmo2014.engine
+(ns nonogen.engine
    (:require ;(bigml.sampling [simple :as sample-simple]
              ;                [reservoir :as sample-reservoir]
              ;                [stream :as sample-stream])

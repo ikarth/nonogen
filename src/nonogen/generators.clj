@@ -1,4 +1,4 @@
-(ns genmo2014.generators
+(ns nonogen.generators
    (:require [clojure.pprint]
              ))
 

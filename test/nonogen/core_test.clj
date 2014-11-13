@@ -1,6 +1,6 @@
-(ns genmo2014.core-test
+(ns nonogen.core-test
   (:require [clojure.test :refer :all]
-            [genmo2014.core :refer :all]))
+            [nonogen.core :refer :all]))
 
 (deftest a-test
   (testing "FIXME, I fail."

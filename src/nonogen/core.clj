@@ -1,6 +1,6 @@
-(ns genmo2014.core
+(ns nonogen.core
    (:require [clojure.pprint]
-             [genmo2014.generators :as gens]
+             [nonogen.generators :as gens]
        )
   (:use [clojure.pprint]
         [clojure.java.io]
@@ -14,7 +14,7 @@
 
 (pprint "Running...")
 
-(def gen-stack (genmo2014.generators/make-generator-stack))
+(def gen-stack (nonogen.generators/make-generator-stack))
 
 (def example-generator
   (gens/make-generator

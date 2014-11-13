@@ -1,6 +1,6 @@
-(ns genmo2014.storyon
+(ns nonogen.storyon
    (:require [clojure.pprint]
-             [genmo2014.generators :as gens]
+             [nonogen.generators :as gens]
              ))
 
 
@@ -13,7 +13,7 @@
   ([]
    {:name nil
     :predicates nil
-    :result [[effect-output ""]]})
+    :result [[-output ""]]})
   ([predicates result]
    {:name nil
     :predicates predicates
@@ -96,23 +96,23 @@
 
 ;; --- Process Event Queue ---
 ;; Called with the story-generator
-;; Take the event at the top of the event queue (if there isn't one, send the exit effect or a special event that triggers the exit storyon)
+;; Take the event at the top of the event queue (if there isn't one, send the exit  or a special event that triggers the exit storyon)
 ;; Filter the storyon deck: from the active deck of storyons take the filtered set of valid storyons for this event+state
 ;; Select a storyon or storyons: build a vector of the chosen storyons
-;; Map across the storyons, building a vector of their effects
-;; Return the vector of effects
+;; Map across the storyons, building a vector of their s
+;; Return the vector of s
 
 
 ;; - Get current tags (includes tags for top event on queue)
 ;; - Filter the storyon-deck via the tags
 ;; - Select a storyon or storyons, create a vector of the chosen one(s)
 ;; - map #(get % :result) against the vector of selected storyons
-;; TODO: - process the map for additional effects (like auto-popping the queue unlesss specifically surpressed)
-;; - return the resulting vector of effects
+;; TODO: - process the map for additional s (like auto-popping the queue unlesss specifically surpressed)
+;; - return the resulting vector of s
 
-(defn events-to-effects
+(defn events-to-s
 "  Takes a story and a deck of storyons and processes the story's event queue,
-returning the vector of effects of the first event in the queue and popping
+returning the vector of s of the first event in the queue and popping
 that event off the queue."
   [story storyon-deck]
   (let [tags (get story :tags)] ;todo: properly implement getting tags
@@ -123,10 +123,10 @@ that event off the queue."
 
 
 ;;;
-;;; Effects
+;;; s
 ;;;
 
-;; --- Effects ---
+;; --- s ---
 ;; - Pop Event Queue / Don't Pop Event Queue (determines if the event immidiately repeats)
 ;; - Replace Event (put the popped event back in the queue, to eventually run again)
 ;; - Insert Event (Stick an event at the bottom of the queue)
@@ -134,15 +134,15 @@ that event off the queue."
 ;; - Exit: Inwards (At the generator level, return with :generator set to [this-current-state new-subgenerator]
 ;; - Exit: Outwards (At the generator level, return with an empty :generator result)
 ;; - Exit: In-Place (At the generator level, return with :generator set to the current state of this generator)
-;; - Exit: Forwards (At the generator level, return with generator set to a completely different generator...which has the side effect of dropping this one )
+;; - Exit: Forwards (At the generator level, return with generator set to a completely different generator...which has the side  of dropping this one )
 ;; - Output (Add information to the output queue)
 ;; - Feedback (Add information to the feedback vector)
-;; - Alter state (Most common effect, with many different varities.)
+;; - Alter state (Most common , with many different varities.)
 ;; - Surpress output?
-;; Effects can also call other effects.
+;; s can also call other s.
 
-(defn story-effects [story]
-  {:output (defn effect-output [output-text]
+(defn story-s [story]
+  {:output (defn -output [output-text]
              (let [output-buffer (if (empty? (:output (:state story)))
                                    []
                                    (:output (:state story)))]
@@ -161,30 +161,30 @@ that event off the queue."
   [:output text])
 
 
-;; --- Process the Effects ---
+;; --- Process the s ---
 ;; Called with the argument of the story-generator
-;; Take the vector of effects
-;; Go through the vector of effects, applying their effects in order.
+;; Take the vector of s
+;; Go through the vector of s, applying their s in order.
 ;; Return the result of the changes
 
-(defn call-effects
-  "Processes an effects list and applies the changes to the story. Takes
-a story (to be returned when altered) and an ordered vector of effects,
+(defn call-s
+  "Processes an s list and applies the changes to the story. Takes
+a story (to be returned when altered) and an ordered vector of s,
 and returns the new story.
-  The effects-list is a vector of vectors. Each subvector is an effect,
+  The s-list is a vector of vectors. Each subvector is an ,
 and should start with a function or a keyword that reduces to a function
-via the story-effects map. The rest of the vector is passed to the fn as
-the effect's argument."
-  [story effects-list]
+via the story-s map. The rest of the vector is passed to the fn as
+the 's argument."
+  [story s-list]
    (loop [s story
-          el effects-list]
+          el s-list]
      (if (empty? el) ;empty vector? we're done
        s
-       (let [first-effect (first el)
-             head (first first-effect)
-             effect-fn (if (keyword? head) (get (story-effects s) head) head)] ; if it's a keyword, grab it from the map; <- note that story-effects is scoped from above
-         (if (ifn? effect-fn) ; if it isn't a function (because of, say, a failed effects-map lookup) then bail and return the unmodified story
-           (recur (apply effect-fn (rest first-effect)) (rest el))
+       (let [first- (first el)
+             head (first first-)
+             -fn (if (keyword? head) (get (story-s s) head) head)] ; if it's a keyword, grab it from the map; <- note that story-s is scoped from above
+         (if (ifn? -fn) ; if it isn't a function (because of, say, a failed s-map lookup) then bail and return the unmodified story
+           (recur (apply -fn (rest first-)) (rest el))
            (recur s (rest el)))))))
 
 ;;;
@@ -192,8 +192,8 @@ the effect's argument."
 ;;;
 
 (defn generate-story [story-generator]
-  (call-effects story-generator
-                (events-to-effects story-generator example-storyons)))
+  (call-s story-generator
+                (events-to-s story-generator example-storyons)))
 
 ;;;
 ;;; Sketching
@@ -228,7 +228,7 @@ example-story
 ;(expand-predicates example-predicate-list predicate-conversions)
 
 
-;((:output (story-effects example-story)) ["Test"])
+;((:output (story-s example-story)) ["Test"])
 
 (def example-story  {:state {:characters []
             :scenes []
@@ -237,24 +237,24 @@ example-story
             }
     })
 
-;((:output (story-effects example-story)) "test")
-;(map #(((key %1) (story-effects example-story)) (val %1)) {:output "test"})
+;((:output (story-s example-story)) "test")
+;(map #(((key %1) (story-s example-story)) (val %1)) {:output "test"})
 
-;(call-effects example-story [[:output "test"] [:output "test2"]])
+;(call-s example-story [[:output "test"] [:output "test2"]])
 
-(defn test-effect [state]
+(defn test- [state]
   {:a (fn [x] (println "A") (+ x state))
    :b (fn [x] (println "B" )(- x state))})
 
 (defn call-test
   []
   (reduce
-   (fn [story effect-vec]
-     (let [effect-fn (first effect-vec)]
-       (apply (if (keyword? effect-fn)
-                (get (test-effect story) effect-fn)
-                effect-fn)
-              (rest effect-vec))))
+   (fn [story -vec]
+     (let [-fn (first -vec)]
+       (apply (if (keyword? -fn)
+                (get (test- story) -fn)
+                -fn)
+              (rest -vec))))
    9
    [[:b 7][:a 5]]))
 

@@ -1,7 +1,7 @@
-(ns genmo2014.fight
-   (:require (bigml.sampling [simple :as sample-simple]
-                             [reservoir :as sample-reservoir]
-                             [stream :as sample-stream])
+(ns nonogen.fight
+   (:require ;(bigml.sampling [simple :as sample-simple]
+              ;               [reservoir :as sample-reservoir]
+             ;                [stream :as sample-stream])
              [clojure.pprint]
              ))
 

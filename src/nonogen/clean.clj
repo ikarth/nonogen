@@ -1,4 +1,4 @@
-(ns genmo2014.clean)
+(ns nonogen.clean)
 
 
 ;;; Useful functions for cleaning an input text

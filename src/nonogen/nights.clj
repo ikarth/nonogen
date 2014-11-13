@@ -1,7 +1,7 @@
-(ns genmo2014.nights
+(ns nonogen.nights
    (:require [clojure.pprint]
-             [genmo2014.generators :as gens]
-             [genmo2014.storyon]))
+             [nonogen.generators :as gens]
+             [nonogen.storyon]))
 
 ;;;;;
 ;;;;; Generators to output stories
@@ -25,7 +25,7 @@
       :forward (:inward (:state story-generator)))))
 
 (defn story [story-generator]
-  (let [story-gen (genmo2014.storyon/generate-story story-generator)]
+  (let [story-gen (nonogen.storyon/generate-story story-generator)]
     (let [exit (:exit (:state story-gen))]
       (if exit
         {:output (:output (:state story-gen))

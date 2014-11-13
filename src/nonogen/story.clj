@@ -1,4 +1,4 @@
-(ns genmo2014.story
+(ns nonogen.story
    (:require [clojure.pprint]
              ))
 

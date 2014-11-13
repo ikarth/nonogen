@@ -1,4 +1,4 @@
-(ns genmo2014.babel
+(ns nonogen.babel
   (:require [clojure.pprint]
             )
   (:use [clojure.pprint]

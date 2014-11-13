@@ -22,5 +22,5 @@
                  ;[caesium "0.3.0"]
                  ;;[org.clojars.ikarth/libsodium-windows-native-deps "1.0.0"]
                  ]
-  :local-repo "../local-maven"
+  :local-repo "../local-maven" ;uses a local maven repository to save space on my other hard drive
 )

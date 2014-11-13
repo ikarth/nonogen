@@ -13,7 +13,7 @@
   ([]
    {:name nil
     :predicates nil
-    :result [[effect-output ""]]})
+    :result [[:output ""]]})
   ([predicates result]
    {:name nil
     :predicates predicates

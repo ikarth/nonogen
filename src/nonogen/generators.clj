@@ -79,36 +79,7 @@
 
 
 
-(def example-generator-2
-  (make-generator
- {:state [0]
-  :generator (fn [gen]
-                {:output (:state gen);(:generator gen)
-                 :generator (merge gen {:state (into [] (map inc (:state gen)))})
-                 :feedback nil})}))
 
-(def example-generator-3
-  (make-generator
- {:state [0]
-  :generator (fn [gen]
-                {:output "Generator Three"
-                 :generator nil
-                 :feedback []})}))
-
-(def example-generator-stack
-  {:generator-stack [example-generator-2]
-   :output []})
-
-
-(process example-generator-stack)
-
-(process (process (process example-generator-stack)))
-
-(nth (iterate process example-generator-stack) 15)
-
-(take 15 (take-while
-          #(not (nil? %))
-  (iterate #(if (< % 10) (inc %) nil) 1)))
 
 ;(process-generator (make-generator-manager example-generator-stack))
 ;(process (make-generator-manager example-generator-stack))
@@ -130,5 +101,5 @@
     :insert (fn [a] (make-generator-manager (insert {:generator-stack generator-stack, :output output} a)))
    }))
 
-(defn process-generator [gen]
-  ((:process-gen (make-generator-manager example-generator-stack))))
+;(defn process-generator [gen]
+;  ((:process-gen (make-generator-manager example-generator-stack))))

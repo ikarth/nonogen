@@ -4,6 +4,29 @@
              ))
 
 
+;;;
+;;; Story Query
+;;;
+
+(defn get-current-event [story]
+  (peek (get-in story [:state :event])))
+
+(defn get-current-character [story]
+  (peek (get-in story [:state :characters]))) ; todo: pick current character by event
+
+
+(defn get-story-tags [story]
+  (let [state (get story :state)
+        scene (peek (get state :scenes))
+        event (get-current-event story) ;todo: add support for event tags
+        current-character (get-current-character story)
+        ;event-tags ((:get-tags (peek (get state :events))))
+        ]
+    (merge
+     (:tags state)
+     (:tags scene)
+     (:tags current-character))))
+
 
 ;;;
 ;;; Storyons
@@ -110,12 +133,14 @@
 ;; TODO: - process the map for additional effects (like auto-popping the queue unlesss specifically surpressed)
 ;; - return the resulting vector of effecs
 
+
 (defn events-to-effects
 "  Takes a story and a deck of storyons and processes the story's event queue,
 returning the vector of effects of the first event in the queue and popping
 that event off the queue."
   [story storyon-deck]
-  (let [tags (get story :tags)] ;todo: properly implement getting tags
+  (let [tags (get-story-tags story)] ;todo: properly implement getting tags
+    (clojure.pprint/pprint tags)
     (reduce
      #(into %1 (get %2 :result))
      []
@@ -195,47 +220,50 @@ the effect's argument."
   (call-effects story-generator
                 (events-to-effects story-generator example-storyons)))
 
+
+
+
 ;;;
 ;;; Sketching
 ;;;
 
-(defn make-story []
-  (gens/make-generator
-   {:state {:characters []
-            :scenes []
-            :events []
-            :output []
-            }
-    :generator nil}))
+;(defn make-story []
+;  (gens/make-generator
+;   {:state {:characters []
+;            :scenes []
+;            :events []
+;            :output []
+;            }
+;    :generator nil}))
 
-(def example-story
-  (merge-with
-   #(merge %1 %2)
-   (make-story)
-   {:state {:characters [{:name "Scheherazade" :tags {:stories [] :gender :female}} {:name "Shahryar" :tags {:gender :male}}]
-          :scenes [{:current-character "Scheherazade" :scene :storytelling :storyteller "Scheherazade"}]
-          }}))
+;(def example-story
+;  (merge-with
+;   #(merge %1 %2)
+;   (make-story)
+;   {:state {:characters [{:name "Scheherazade" :tags {:stories [] :gender :female}} {:name "Shahryar" :tags {:gender :male}}]
+;          :scenes [{:current-character "Scheherazade" :scene :storytelling :storyteller "Scheherazade"}]
+;          }}))
 
-example-story
-(println "-----------------------------")
-(println "-----------------------------")
-(println "-----------------------------")
-(clojure.pprint/pprint "Running test...")
-(generate-story example-story)
+;example-story
+;(println "-----------------------------")
+;(println "-----------------------------")
+;(println "-----------------------------")
+;(clojure.pprint/pprint "Running test...")
+;(generate-story example-story)
 
 
-(def example-predicate-list [:current-character-is-storyteller :test [:vector "test"]])
+;(def example-predicate-list [:current-character-is-storyteller :test [:vector "test"]])
 ;(expand-predicates example-predicate-list predicate-conversions)
 
 
 ;((:output (story-effects example-story)) ["Test"])
 
-(def example-story  {:state {:characters []
-            :scenes []
-            :events []
-            :output []
-            }
-    })
+;(def example-story  {:state {:characters []
+;            :scenes []
+;            :events []
+;            :output []
+;            }
+;    })
 
 ;((:output (story-effects example-story)) "test")
 ;(map #(((key %1) (story-effects example-story)) (val %1)) {:output "test"})

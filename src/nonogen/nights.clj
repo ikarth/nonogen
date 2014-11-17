@@ -23,6 +23,7 @@
              :scenes scenes
              :events events
              :output output
+             :exit nil
              }
      :generator generator})))
 
@@ -146,6 +147,14 @@
 ;;;
 ;;; Sketching
 ;;;
+
+
+(nth (iterate gens/process
+ (gens/insert (gens/make-generator-stack)
+              (make-story (make-characters))))
+     15)
+
+
 
 ;(def example-story (assoc (make-story)
 ;  :state {:characters [{:name "Scheherazade" :tags {:stories [] :gender :female}} {:name "Shahryar" :tags {:gender :male}}]

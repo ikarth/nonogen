@@ -48,6 +48,11 @@
 ;;   Merge them into one unified map
 ;;   Return that
 
+(defn get-tags [story]
+  (into {}
+        ))
+
+
 ;(defn process-event [story-generator]
 ;  (let [events (:events (:state story-generator))]
 ;    ))

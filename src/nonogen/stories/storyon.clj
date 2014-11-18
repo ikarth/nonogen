@@ -1,6 +1,7 @@
 (ns nonogen.stories.storyon
    (:require [clojure.pprint]
              [nonogen.generators :as gens]
+             [nonogen.stories.predicates]
              ))
 
 ;;;
@@ -25,8 +26,25 @@
 ;;; Filtering and Selecting
 ;;;
 
+;(defn filter-storyons [storyon-deck tags]
+;  (filter
+;   (fn [a-storyon]
+;     (not (some false?
+;                (map (fn [pred]
+;            (pred tags))
+;          (nonogen.stories.predicates/expand-predicates-default (:predicates a-storyon))))))
+;   storyon-deck))
+
+
 (defn filter-storyons [storyon-deck tags]
-  storyon-deck) ;todo
+  (filter
+   (fn [a-storyon]
+     (not (some false?
+                (map (fn [pred]
+                       (pred tags))
+                     (nonogen.stories.predicates/expand-predicates-default
+                      (:predicates a-storyon))))))
+   storyon-deck))
 
 (defn select-storyons [storyon-deck tags]
   storyon-deck) ;todo

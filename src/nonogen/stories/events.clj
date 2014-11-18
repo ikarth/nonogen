@@ -31,8 +31,11 @@ that event off the queue."
   [story storyon-deck]
   (let [tags (nonogen.stories.predicates/get-story-tags story)] ;todo: properly implement getting tags
     (clojure.pprint/pprint tags)
+    (clojure.pprint/pprint storyon-deck)
     (reduce
      #(into %1 (get %2 :result))
      []
-     (nonogen.stories.storyon/select-storyons (nonogen.stories.storyon/filter-storyons storyon-deck tags) tags))))
+     (nonogen.stories.storyon/select-storyons
+      (nonogen.stories.storyon/filter-storyons storyon-deck tags)
+      tags))))
 

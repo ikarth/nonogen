@@ -16,7 +16,7 @@
    {:predicates [:current-character-is-storyteller]
     :result [[:output "And she told them a story. "]]})
    (make-storyon
-   {:predicates []
+   {:predicates [(fn [_] false)]
     :result [[:output "And then debug text was printed. "]]})
 
    ])

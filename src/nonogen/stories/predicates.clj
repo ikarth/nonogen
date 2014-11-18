@@ -21,6 +21,7 @@
         ;event-tags ((:get-tags (peek (get state :events))))
         ]
     (merge
+     {:current-character (:name current-character)}
      (:tags state)
      (:tags scene)
      (:tags current-character))))
@@ -55,13 +56,19 @@
 
    })
 
-(defn expand-predicates [predicates keyword-conversions]
+(defn expand-predicates
+  "Takes a vector of predicates and uses the predicate conversion map to convert them to functions."
+  [predicates keyword-conversions]
   (map
    (fn [pred]
      (loop [p pred]
        (if (fn? p)
          p
-         (if (or (vector? p))
+         (if (or (vector? p) (not (keyword? p)))
            p
            (recur (p keyword-conversions))))))
    predicates))
+
+(defn expand-predicates-default [predicates]
+  (expand-predicates predicates predicate-conversions))
+

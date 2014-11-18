@@ -5,6 +5,8 @@
              [nonogen.stories.events]
              [nonogen.stories.effects]
              [nonogen.stories.storyon-library]
+             [nonogen.stories.storyon]
+             [nonogen.stories.predicates]
              ))
 
 ;;;;;
@@ -44,7 +46,7 @@
         {:output (:output (:state story-gen))
          :generator (exit-state story-gen)
          :feedback nil}
-        story-gen;(recur story-gen)
+        story-gen;(recur story-gen) ; todo: add exit states so we can do this properly
       )
       (println story-gen)
       {:output (:output (:state story-gen))
@@ -133,6 +135,26 @@
      15)
 
 
+;(defn filter-storyons [storyon-deck tags]
+;  (filter
+;   (fn [a-storyon]
+;     (not (some false?
+;                (map (fn [pred]
+;                       (pred tags))
+;                     (nonogen.stories.predicates/expand-predicates-default
+;                      (:predicates a-storyon))))))
+;   storyon-deck))
+
+(nonogen.stories.storyon/filter-storyons
+;(filter-storyons
+ nonogen.stories.storyon-library/example-storyons
+ (make-story
+  (make-characters)))
+
+
+(nonogen.stories.events/events-to-effects
+ (add-scene (make-story (make-characters)) {:tags {:storyteller "Scheherazade"}})
+ nonogen.stories.storyon-library/example-storyons)
 
 ;(def example-story (assoc (make-story)
 ;  :state {:characters [{:name "Scheherazade" :tags {:stories [] :gender :female}} {:name "Shahryar" :tags {:gender :male}}]

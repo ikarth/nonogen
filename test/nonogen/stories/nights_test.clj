@@ -1,6 +1,6 @@
-(ns nonogen.nights-test
+(ns nonogen.stories.nights-test
   (:require [clojure.test :refer :all]
-            [nonogen.nights :refer :all]
+            [nonogen.stories.nights :refer :all]
             [nonogen.generators :as gens]))
 
 (deftest a-test
@@ -28,7 +28,7 @@ example-story
     (is (= ((get example-story :generator) example-story)
            {:output ["So she said, \"It is related, O august king, that...\" " "Then she ended, saying, \"But there is another tale which is more marvelous still.\"\n" "And she told them a story. " "And then debug text was printed. "], :generator {}, :feedback nil}
          ))
-    (is (= (:state (nonogen.storyon/generate-story example-story))
+    (is (= (:state (nonogen.stories.nights/generate-story example-story))
          {:characters [{:name "Scheherazade", :tags {:stories [], :gender :female}} {:name "Shahryar", :tags {:gender :male}}], :scenes [{:current-character "Scheherazade", :scene :storytelling, :storyteller "Scheherazade"}], :output ["So she said, \"It is related, O august king, that...\" " "Then she ended, saying, \"But there is another tale which is more marvelous still.\"\n" "And she told them a story. " "And then debug text was printed. "]}
                  ))
     (is (= (nth (iterate gens/process (gens/insert (nonogen.generators/make-generator-stack) example-story)) 15)
@@ -38,7 +38,7 @@ example-story
 
 
 ((get example-story :generator) example-story)
-(nonogen.storyon/generate-story example-story)
+(nonogen.stories.nights/generate-story example-story)
 (def gen-stack (nonogen.generators/make-generator-stack))
 (gens/insert (nonogen.generators/make-generator-stack) example-story)
 (gens/process (gens/insert (nonogen.generators/make-generator-stack) example-story))

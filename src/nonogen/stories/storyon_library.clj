@@ -13,7 +13,7 @@
              ]})
    (make-storyon
    {:predicates [:current-character-is-storyteller :storytelling-ending]
-    :result [[:output "Then she ended, saying, \"But there is another tale which is more marvelous still.\"\n"]
+    :result [[:output "Then she ended, saying, \"But there is another tale which is more marvelous still.\"\n\n"]
              [:pop-event true]
              [:add-event {:tags {:storytelling-beginning true :singular-selection true}}]
              ;[:exit :outward]

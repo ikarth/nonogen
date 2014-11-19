@@ -21,13 +21,24 @@
 ;; - Surpress output?
 ;; Effects can also call other Effects.
 
+(defn add-to-story [story thing-type thing]
+  (assoc-in story thing-type (conj (get-in story thing-type) thing)))
+
+(defn format-output [text]
+  [:output text])
+
 (defn story-effects [story]
   {:output (defn effect-output [output-text]
              (let [output-buffer (if (empty? (:output (:state story)))
                                    []
                                    (:output (:state story)))]
                (assoc-in story [:state :output] (conj output-buffer output-text))))
-   :pop-event nil
+   :pop-event (defn pop-event-queue [yes]
+                (if yes
+                  (if (not (empty? (get-in story [:state :events])))
+                    (assoc-in story [:state :events] (pop (get-in story [:state :events])))
+                    story)
+                  story))
    :surpress-pop nil
    :insert-event (defn insert-event [event-to-insert]
                    (let [event-queue (:events (:state story))]
@@ -35,11 +46,19 @@
    :exit (defn exit-command [command]
            (assoc-in story [:state :exit] command))
    :feedback nil
+   :add-state-tag (defn add-state-tag [thing]
+                    (assoc-in story [:state :tags] (merge (get-in story [:state :tags]) thing)))
+   :remove-state-tag (defn remove-state-tag [thing]
+                       (assoc-in story [:state :tags] (dissoc (get-in story [:state :tags]) thing)))
+   :add-event (defn add-event [event]
+                (add-to-story story [:state :events] event))
+   :increment (defn increment [_]
+                (assoc story :counter (inc (let [c (:counter story)]
+                                             (if (number? c) c 0)
+                                             ))))
    })
 
-(defn format-output [text]
-  [:output text])
-
+(number? (:counter {}))
 
 ;; --- Process the Effects ---
 ;; Called with the argument of the story-generator
@@ -58,6 +77,7 @@ the effect's argument."
   [story effects-list]
    (loop [s story
           el effects-list]
+     ;(clojure.pprint/pprint el)
      (if (empty? el) ;empty vector? we're done
        s
        (let [first-effect (first el)

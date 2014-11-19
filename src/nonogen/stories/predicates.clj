@@ -7,7 +7,7 @@
 ;;;
 
 (defn get-current-event [story]
-  (peek (get-in story [:state :event])))
+  (peek (get-in story [:state :events])))
 
 (defn get-current-character [story]
   (peek (get-in story [:state :characters]))) ; todo: pick current character by event
@@ -24,6 +24,7 @@
      {:current-character (:name current-character)}
      (:tags state)
      (:tags scene)
+     (:tags event)
      (:tags current-character))))
 
 
@@ -33,28 +34,10 @@
 ;;   Merge them into one unified map
 ;;   Return that
 
-(defn get-tags [story]
-  (let [state (get story :state)
-        scene (peek (get state :scenes))
-        event (get-current-event story) ;todo: add support for event tags
-        current-character (get-current-character story)
-        ;event-tags ((:get-tags (peek (get state :events))))
-        ]
-    (merge
-     (:tags state)
-     (:tags scene)
-     (:tags current-character))))
-
-
 ;;;
 ;;; Predicates
 ;;;
 
-(def predicate-conversions
-  {:current-character-is-storyteller #(= (:storyteller %) (:current-character %))
-   :test :current-character-is-storyteller
-
-   })
 
 (defn expand-predicates
   "Takes a vector of predicates and uses the predicate conversion map to convert them to functions."
@@ -68,6 +51,18 @@
            p
            (recur (p keyword-conversions))))))
    predicates))
+
+;;;
+;;; The actual predicates we're using
+;;;
+
+(def predicate-conversions
+  {:current-character-is-storyteller #(= (:storyteller %) (:current-character %)) ;todo: add scenes + :storyteller tag
+   :test :current-character-is-storyteller
+   :storytelling-beginning #(contains? % :storytelling-beginning)
+   :storytelling-ending #(contains? % :storytelling-ending)
+   :storytelling-ready-to-tell #(contains? % :storytelling-ready-to-tell)
+   })
 
 (defn expand-predicates-default [predicates]
   (expand-predicates predicates predicate-conversions))

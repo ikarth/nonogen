@@ -5,8 +5,6 @@
              [nonogen.stories.events]
              [nonogen.stories.effects]
              [nonogen.stories.storyon-library]
-             [nonogen.stories.storyon]
-             [nonogen.stories.predicates]
              ))
 
 ;;;;;
@@ -142,39 +140,39 @@
  15)
 
 
-(let [astory (make-story (make-characters))
-      tags (nonogen.stories.predicates/get-story-tags astory)]
-  (nonogen.stories.storyon/select-storyons
-   (nonogen.stories.storyon/filter-storyons nonogen.stories.storyon-library/example-storyons
-                                                                                    astory)
-                                           astory)
+;; (let [astory (make-story (make-characters))
+;;       tags (nonogen.stories.predicates/get-story-tags astory)]
+;;   (nonogen.stories.storyon/select-storyons
+;;    (nonogen.stories.storyon/filter-storyons nonogen.stories.storyon-library/example-storyons
+;;                                                                                     astory)
+;;                                            astory)
 
-  )
-
-
-
-(nonogen.stories.predicates/get-story-tags (make-story (make-characters)))
-
-
-(nonogen.stories.predicates/get-story-tags
- (add-scene (make-story (make-characters)) {:tags {:storyteller "Scheherazade"}}))
-
-(let [gen-story (add-scene (make-story (make-characters)) {:tags {:storyteller "Scheherazade"}})]
-  (nonogen.stories.effects/call-effects gen-story
-   (nonogen.stories.events/events-to-effects
-    gen-story
-  nonogen.stories.storyon-library/example-storyons)))
+;;   )
 
 
 
-;(def example-story (assoc (make-story)
-;  :state {:characters [{:name "Shahryar" :tags {:gender :male}}
-;   {:name "Scheherazade" :tags {:stories [] :gender :female :can-tell-stories? true}}]
-;          :scenes [{:current-character "Scheherazade" :scene :storytelling :storyteller "Scheherazade"}]
-;          :output []
-;          }))
-(def example-story (add-scene (make-story (make-characters)) {:tags {:storyteller "Scheherazade"}}))
-((get example-story :generator) example-story)
+;; (nonogen.stories.predicates/get-story-tags (make-story (make-characters)))
+
+
+;; (nonogen.stories.predicates/get-story-tags
+;;  (add-scene (make-story (make-characters)) {:tags {:storyteller "Scheherazade"}}))
+
+;; (let [gen-story (add-scene (make-story (make-characters)) {:tags {:storyteller "Scheherazade"}})]
+;;   (nonogen.stories.effects/call-effects gen-story
+;;    (nonogen.stories.events/events-to-effects
+;;     gen-story
+;;   nonogen.stories.storyon-library/example-storyons)))
+
+
+
+;; ;(def example-story (assoc (make-story)
+;; ;  :state {:characters [{:name "Shahryar" :tags {:gender :male}}
+;; ;   {:name "Scheherazade" :tags {:stories [] :gender :female :can-tell-stories? true}}]
+;; ;          :scenes [{:current-character "Scheherazade" :scene :storytelling :storyteller "Scheherazade"}]
+;; ;          :output []
+;; ;          }))
+;; (def example-story (add-scene (make-story (make-characters)) {:tags {:storyteller "Scheherazade"}}))
+;; ((get example-story :generator) example-story)
 
 
 

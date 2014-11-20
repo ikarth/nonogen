@@ -16,13 +16,19 @@
 ;;; Story Generation Process
 ;;;
 
-(defn clear-output [story-generator]
-  (assoc-in story-generator [:state :output] []))
+(defn clear-state
+  "Clears out bits of the story state that should not carry over from last time."
+  [story-generator]
+  (assoc-in (assoc-in story-generator [:state :output] [])
+            [:state :exit]
+            nil))
 
 (declare example-storyons)
 
-(defn generate-story [story-generator]
-  (let [story-gen (clear-output story-generator)]
+(defn generate-story
+  "Runs the story generator "
+  [story-generator]
+  (let [story-gen (clear-state story-generator)]
     (nonogen.stories.effects/call-effects story-gen
                                           (nonogen.stories.events/events-to-effects story-gen example-storyons))))
 
@@ -118,22 +124,28 @@
              [:add-event {:tags {:storytelling-ready-to-tell true :singular-selection true}}]
              ]})
    (nonogen.stories.storyon/make-storyon
-   {:predicates [:current-character-is-storyteller :storytelling-ending]
+   {:predicates [:current-character-is-storyteller :storytelling-ending (fn [_] false)]
     :result [[:output "Then she ended, saying, \"But there is another tale which is more marvelous still.\"\n\n"]
              [:pop-event true]
              [:add-event {:tags {:storytelling-beginning true :singular-selection true}}]
-             ;[:exit :outward]
+             [:exit :inplace]
              ]})
    (nonogen.stories.storyon/make-storyon
-   {:predicates [:current-character-is-storyteller :storytelling-ready-to-tell]
-    :result [[:output "And she told them a story. "]
+   {:predicates [:current-character-is-storyteller :storytelling-ready-to-tell (fn [_] false)]
+    :result [[:output "And she told them the following story:\n\n"]
              [:pop-event true]
              [:add-event {:tags {:storytelling-ending true :singular-selection true}}]
-             [:inward-story (nonogen.stories.nights/make-basic-story)] ;todo: generate new story and exit into it.
+             [:exit-inward (nonogen.stories.nights/make-basic-story)] ;todo: generate new story and exit into it.
              ]})
    (nonogen.stories.storyon/make-storyon
    {:predicates [(fn [_] false)]
     :result [[:output "And then debug text was printed. "]]})
+   (nonogen.stories.storyon/make-storyon
+    {:predicates [:storytelling-ready-to-tell]
+     :result [[:output "And that was the end of the story.\n\n"]
+              [:pop-event true]
+              [:add-event {:tags {:storytelling-beginning true :singular-selection true}}]
+              [:exit-outward true]]})
 
    ])
 
@@ -152,15 +164,16 @@
 ;;;
 
 
-;; (clojure.inspector/inspect-tree
-;;  (nth
-;;  (iterate gens/process
-;;  (gens/insert (gens/make-generator-stack)
-;;               (add-event
-;;                (add-scene (make-story (make-characters)) {:tags {:storyteller "Scheherazade"}})
-;;                {:tags {:storytelling-beginning true}}
-;;               )))
-;;   15))
+ ;(clojure.inspector/inspect-tree
+ (hash
+  (nth
+  (iterate gens/process
+  (gens/insert (gens/make-generator-stack)
+               (add-event
+                (add-scene (make-story (make-characters)) {:tags {:storyteller "Scheherazade"}})
+                {:tags {:storytelling-beginning true}}
+               )))
+   7))
 
 
 

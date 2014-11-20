@@ -7,11 +7,11 @@
   (testing "1 = 1"
     (is (= 1 1))))
 
-;(def example-story (assoc (make-story)
-;  :state {:characters [{:name "Scheherazade" :tags {:stories [] :gender :female}} {:name "Shahryar" :tags {:gender :male}}]
-;          :scenes [{:current-character "Scheherazade" :scene :storytelling :storyteller "Scheherazade"}]
-;          :output []
-;          }))
+(def example-story (assoc (make-story)
+  :state {:characters [{:name "Scheherazade" :tags {:stories [] :gender :female}} {:name "Shahryar" :tags {:gender :male}}]
+          :scenes [{:current-character "Scheherazade" :scene :storytelling :storyteller "Scheherazade"}]
+          :output []
+          }))
 
 (deftest test-example-story
   (testing "Example story construction"

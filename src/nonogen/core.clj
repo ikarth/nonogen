@@ -10,11 +10,12 @@
 
 (println "\nRunning...")
 
-(print (apply str
+(print (apply str "\n\n"
               (:output
  (nth (iterate gens/process
  (gens/insert (gens/make-generator-stack)
               (nights/add-event (nights/add-scene (nights/make-story (nights/make-characters))
                                                   {:tags {:storyteller "Scheherazade"}})
                                 {:tags {:storytelling-beginning true}})))
-     300))))
+     30))))
+

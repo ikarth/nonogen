@@ -55,3 +55,4 @@
     [(first (filter #(not (nil? %)) storyon-deck))]; todo: implement proper weighted selection
     storyon-deck
     ))
+

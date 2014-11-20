@@ -17,4 +17,4 @@
               (nights/add-event (nights/add-scene (nights/make-story (nights/make-characters))
                                                   {:tags {:storyteller "Scheherazade"}})
                                 {:tags {:storytelling-beginning true}})))
-     12))))
+     300))))

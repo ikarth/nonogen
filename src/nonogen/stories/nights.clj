@@ -1,6 +1,6 @@
 (ns nonogen.stories.nights
    (:require [clojure.pprint]
-             ;[clojure.inspector]
+             [clojure.inspector]
              [nonogen.generators :as gens]
              [nonogen.stories.events]
              [nonogen.stories.effects]
@@ -37,24 +37,22 @@
   (let [exit (:exit (:state story-generator))]
     (case exit
       :outward nil
-      :inplace story-generator
-      :inward (into [] story-generator (:subgenerator (:state story-generator))) ;todo: other generator goes here
-      :forward (:inward (:state story-generator)))))
+      :inplace [story-generator]
+      :inward ;[(assoc-in story-generator [:state :subgenerator] nil)];
+      [(assoc-in story-generator [:state :subgenerator] nil) (:subgenerator (:state story-generator)) ]
+            ;[(:subgenerator (:state story-generator))
+              ; (assoc-in story-generator [:state :subgenerator] nil)] ;todo: other generator goes here
+      :forward [(:inward (:state story-generator))]
+      [story-generator])))
 
 (defn story [story-generator]
-  (let [story-gen (generate-story story-generator)]
-    (let [exit (:exit (:state story-gen))]
-      (if exit
-        {:output (:output (:state story-gen))
-         :generator (exit-state story-gen)
-         :feedback nil}
-        story-gen;(recur story-gen) ; todo: add exit states so we can do this properly
-      )
-      ;(println story-gen)
+  (let [output
+    (let [story-gen (generate-story story-generator)]
+      ;(clojure.pprint/pprint story-gen)
       {:output (:output (:state story-gen))
-       :generator story-gen;{};(exit-state story-gen)
-       :feedback nil}
-      )))
+       :generator (exit-state story-gen)
+       :feedback nil})]
+    output))
 
 ;;;
 ;;; Stories
@@ -103,6 +101,10 @@
 
 
 
+(defn make-basic-story []
+  (add-event (add-scene (make-story (make-characters))
+                        {:tags {:storyteller "Scheherazade"}})
+             {:tags {:storytelling-beginning true}}))
 
 
 
@@ -130,14 +132,16 @@
 ;;;
 
 
-(nth
+(clojure.inspector/inspect-tree
+ (nth
  (iterate gens/process
  (gens/insert (gens/make-generator-stack)
               (add-event
                (add-scene (make-story (make-characters)) {:tags {:storyteller "Scheherazade"}})
                {:tags {:storytelling-beginning true}}
               )))
- 15)
+  15))
+
 
 
 ;; (let [astory (make-story (make-characters))

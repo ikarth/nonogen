@@ -56,6 +56,8 @@
                 (assoc story :counter (inc (let [c (:counter story)]
                                              (if (number? c) c 0)
                                              ))))
+   :inward-story (defn embed-story [substory]
+                   (assoc-in (assoc-in story [:state :subgenerator] substory) [:state :exit] :inward))
    })
 
 (number? (:counter {}))
@@ -77,7 +79,7 @@ the effect's argument."
   [story effects-list]
    (loop [s story
           el effects-list]
-     ;(clojure.pprint/pprint el)
+     (clojure.pprint/pprint el)
      (if (empty? el) ;empty vector? we're done
        s
        (let [first-effect (first el)

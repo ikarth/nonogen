@@ -8,6 +8,8 @@
         )
   (:gen-class))
 
+(println "\nRunning...")
+
 (print (apply str
               (:output
  (nth (iterate gens/process
@@ -15,4 +17,4 @@
               (nights/add-event (nights/add-scene (nights/make-story (nights/make-characters))
                                                   {:tags {:storyteller "Scheherazade"}})
                                 {:tags {:storytelling-beginning true}})))
-     300))))
+     12))))

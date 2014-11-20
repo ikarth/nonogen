@@ -54,6 +54,7 @@
           gen-stack (if (empty? (:generator gen-result))
                       after-feedback
                       (into-conj after-feedback (:generator gen-result)))]
+      ;(clojure.pprint/pprint "------------Process-----------")
       {:generator-stack gen-stack :output new-output})))
 
 (defn insert [generator-stack addition]
@@ -63,9 +64,6 @@
 (defn make-generator-stack []
   {:generator-stack []
         :output []})
-
-
-
 
 
 

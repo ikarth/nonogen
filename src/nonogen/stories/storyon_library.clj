@@ -1,5 +1,6 @@
 (ns nonogen.stories.storyon-library
    (:require [nonogen.stories.storyon :refer :all]
+             [nonogen.stories.nights]
              ))
 
 
@@ -23,30 +24,10 @@
     :result [[:output "And she told them a story. "]
              [:pop-event true]
              [:add-event {:tags {:storytelling-ending true :singular-selection true}}]
-             ;[] ;todo: generate new story and exit into it.
+             [:inward-story (nonogen.stories.nights/make-basic-story)] ;todo: generate new story and exit into it.
              ]})
    (make-storyon
    {:predicates [(fn [_] false)]
     :result [[:output "And then debug text was printed. "]]})
 
    ])
-
-
-
-
-(def storytelling-actions
-  [{:predicates {:event #(= % :event-storytelling-begin)
-                 :character-storyteller true?}
-    :outcome {:text "So she said, \"It is related, O august king, that...\" "
-              :events [:event-storytelling-telling]}
-    }
-   {:predicates {:event #(= % :event-storytelling-end)
-                 :character-storyteller true?}
-    :outcome {:text "Then she ended, saying, \"But there is another tale which is more marvelous still.\"\n"
-               :events [:event-storytelling-begin]}
-    }
-   {:predicates {:event #(= % :event-storytelling-telling)
-                 :character-storyteller true?}
-    :outcome {:text "And she told them a story. "
-               :events [:event-storytelling-end]}
-    }])

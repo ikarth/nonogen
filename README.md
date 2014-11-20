@@ -6,7 +6,7 @@ NoNoGen: A novel generator that takes a (hopefully) novel approach.
 
 National Novel Generation Month Project 2014
 
-[NaNoGenMo 2014] (https://github.com/dariusk/NaNoGenMo-2014): It started as a joke on twitter by Darius Kazemi and grew into an entire month of people creating novel-writing generators. This one is mine.
+[NaNoGenMo 2014] (https://github.com/dariusk/NaNoGenMo-2014): It started as a joke on Twitter by Darius Kazemi and grew into an entire month of people creating novel-writing generators. This one is mine.
 
 
 ## Usage

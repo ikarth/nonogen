@@ -1,5 +1,7 @@
 (ns nonogen.stories.predicates
    (:require [clojure.pprint]
+                          [clojure.inspector]
+
              ))
 
 ;;;
@@ -38,18 +40,24 @@
 ;;; Predicates
 ;;;
 
-
-(defn expand-predicates
-  "Takes a vector of predicates and uses the predicate conversion map to convert them to functions."
-  [predicates keyword-conversions]
-  (map
-   (fn [pred]
+(defn expand-one-predicate [pred conversions]
      (loop [p pred]
-       (if (fn? p)
-         p
-         (if (or (vector? p) (not (keyword? p)))
-           p
-           (recur (p keyword-conversions))))))
+       (cond
+        (vector? p)
+        (let [f (get conversions (first p))
+              func (expand-one-predicate f conversions)]
+          (if (ifn? func)
+            (fn [r] (func (first (rest p)) r))
+            (fn [_] "vector malformed")))
+
+        (keyword? p) (recur (p conversions))
+        (ifn? p) p
+        :else (fn [_] false)
+        )))
+
+(defn expand-predicates [predicates conversions]
+  (map
+   #(expand-one-predicate % conversions)
    predicates))
 
 ;;;
@@ -59,11 +67,20 @@
 (def predicate-conversions
   {:current-character-is-storyteller #(= (:storyteller %) (:current-character %)) ;todo: add scenes + :storyteller tag
    :test :current-character-is-storyteller
-   :storytelling-beginning #(contains? % :storytelling-beginning)
-   :storytelling-ending #(contains? % :storytelling-ending)
-   :storytelling-ready-to-tell #(contains? % :storytelling-ready-to-tell)
+   ;:storytelling-beginning #(contains? % :storytelling-beginning)
+   ;:storytelling-ending #(contains? % :storytelling-ending)
+   ;:storytelling-ready-to-tell #(contains? % :storytelling-ready-to-tell)
+   :event (fn [tag-value-to-look-for tags]
+            (= (get tags :event) tag-value-to-look-for))
+   :not-current-character-is-storyteller (fn [_] false)
+   :at-least-one-character (fn [_] true)
    })
 
 (defn expand-predicates-default [predicates]
-  (expand-predicates predicates predicate-conversions))
+  (let [expand (expand-predicates predicates predicate-conversions)]
+    expand))
+
+;;;
+;;; Sketching
+;;;
 

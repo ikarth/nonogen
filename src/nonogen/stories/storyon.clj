@@ -27,27 +27,18 @@
 ;;; Filtering and Selecting
 ;;;
 
-;(defn filter-storyons [storyon-deck tags]
-;  (filter
-;   (fn [a-storyon]
-;     (not (some false?
-;                (map (fn [pred]
-;            (pred tags))
-;          (nonogen.stories.predicates/expand-predicates-default (:predicates a-storyon))))))
-;   storyon-deck))
-
-
 (defn filter-storyons [storyon-deck tags]
   (filter
    (fn [a-storyon]
      (not (some false?
                 (map (fn [pred]
-                       (if (not (nil? pred))
+                       (if (ifn? pred)
                          (pred tags)
-                         false
-                         ))
-                     (nonogen.stories.predicates/expand-predicates-default
-                      (:predicates a-storyon))))))
+                         false))
+                     (let [funct (nonogen.stories.predicates/expand-predicates-default (:predicates a-storyon))]
+
+                       funct
+                      )))))
    storyon-deck))
 
 (defn select-storyons [storyon-deck tags]

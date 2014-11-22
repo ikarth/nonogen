@@ -46,10 +46,7 @@
     (case exit
       :outward nil
       :inplace [story-generator]
-      :inward ;[(assoc-in story-generator [:state :subgenerator] nil)];
-      [(assoc-in story-generator [:state :subgenerator] nil) (:subgenerator (:state story-generator)) ]
-            ;[(:subgenerator (:state story-generator))
-              ; (assoc-in story-generator [:state :subgenerator] nil)] ;todo: other generator goes here
+      :inward [(assoc-in story-generator [:state :subgenerator] nil) (:subgenerator (:state story-generator)) ] ; the order is important!
       :forward [(:inward (:state story-generator))]
       [story-generator])))
 
@@ -108,49 +105,66 @@
 (defn make-basic-story []
   (add-event (add-scene (make-story (make-characters))
                         {:tags {:storyteller "Scheherazade"}})
-             {:tags {:storytelling-beginning true}}))
+             {:tags {:event :story-introduction}}))
 
 
 ;;;
 ;;; Storyon Library
 ;;;
 
+
 (def example-storyons
   [(nonogen.stories.storyon/make-storyon
-   {:predicates [:current-character-is-storyteller :storytelling-beginning]
-    :result [[:output "So she said, \"It is related, O august king, that...\" "]
+   {:predicates [:at-least-one-character [:event :story-introduction]]
+    :result [[:output "Once upon a time, there was [main-character-description] named [main-character-name]. " ]
              [:pop-event true]
-             [:increment true]
-             [:add-event {:tags {:storytelling-ready-to-tell true :singular-selection true}}]
+             [:add-event {:tags {:event :pick-next-scene :singular-selection true}}]
              ]})
    (nonogen.stories.storyon/make-storyon
-   {:predicates [:current-character-is-storyteller :storytelling-ending (fn [_] false)]
-    :result [[:output "Then she ended, saying, \"But there is another tale which is more marvelous still.\"\n\n"]
+   {:predicates [[:event :pick-next-scene]]
+    :result [[:output "[She] suggested that [she] should tell a story, because it was Alex's birthday. " ]
              [:pop-event true]
-             [:add-event {:tags {:storytelling-beginning true :singular-selection true}}]
+             [:add-event {:tags {:event :storytelling-beginning :singular-selection true}}]
+             ]})
+   (nonogen.stories.storyon/make-storyon
+   {:predicates [:not-current-character-is-storyteller [:event :storytelling-beginning]]
+    :result [[:output "[She] begged [character-storyteller-name] to tell the story. "]
+             [:quality :increment :scene :anticipation]
+             ]})
+   (nonogen.stories.storyon/make-storyon
+   {:predicates [:current-character-is-storyteller [:event :storytelling-beginning]]
+    :result [[:output "So [she] began, \"It is related, O august king, that...\" "]
+             [:pop-event true]
+             [:quality :erase :scene :anticipation]
+             [:add-event {:tags {:event :storytelling-ready-to-tell :singular-selection true}}]
+             ]})
+   (nonogen.stories.storyon/make-storyon
+   {:predicates [:current-character-is-storyteller [:event :storytelling-ready-to-tell]]
+    :result [[:output "Then [she] told the following story:\n\n"]
+             [:pop-event true]
+             [:add-event {:tags {:event :storytelling-ending :singular-selection true}}]
+             [:exit-inward (nonogen.stories.nights/make-basic-story)]
+             ]})
+   (nonogen.stories.storyon/make-storyon
+   {:predicates [:current-character-is-storyteller [:event :storytelling-ready-to-tell]]
+    :result [[:output "And [she] told a very exciting story.\n\n"]
+             [:pop-event true]
+             [:add-event {:tags {:event :storytelling-ending :singular-selection true}}]
+             ]})
+   (nonogen.stories.storyon/make-storyon
+   {:predicates [:current-character-is-storyteller [:event :storytelling-ending]]
+    :result [[:output "\"And that was how it happened,\" [she] said, ending [her] story.\n\n"]
+             [:pop-event true]
+             [:exit :outward]
+             ]})
+   (nonogen.stories.storyon/make-storyon
+   {:predicates [:current-character-is-storyteller [:event :storytelling-ending]]
+    :result [[:output "Then [she] ended [her] story, saying, \"But there is another tale which is more marvelous still.\"\n\n"]
+             [:pop-event true]
+             [:add-event {:tags {:event :storytelling-beginning :singular-selection true}}]
              [:exit :inplace]
              ]})
-   (nonogen.stories.storyon/make-storyon
-   {:predicates [:current-character-is-storyteller :storytelling-ready-to-tell (fn [_] false)]
-    :result [[:output "And she told them the following story:\n\n"]
-             [:pop-event true]
-             [:add-event {:tags {:storytelling-ending true :singular-selection true}}]
-             [:exit-inward (nonogen.stories.nights/make-basic-story)] ;todo: generate new story and exit into it.
-             ]})
-   (nonogen.stories.storyon/make-storyon
-   {:predicates [(fn [_] false)]
-    :result [[:output "And then debug text was printed. "]]})
-   (nonogen.stories.storyon/make-storyon
-    {:predicates [:storytelling-ready-to-tell]
-     :result [[:output "And that was the end of the story.\n\n"]
-              [:pop-event true]
-              [:add-event {:tags {:storytelling-beginning true :singular-selection true}}]
-              [:exit-outward true]]})
-
    ])
-
-
-
 
 
 
@@ -165,15 +179,15 @@
 
 
  ;(clojure.inspector/inspect-tree
- (hash
+
   (nth
   (iterate gens/process
   (gens/insert (gens/make-generator-stack)
                (add-event
                 (add-scene (make-story (make-characters)) {:tags {:storyteller "Scheherazade"}})
-                {:tags {:storytelling-beginning true}}
+                {:tags {:event :story-introduction}}
                )))
-   7))
+   9)
 
 
 

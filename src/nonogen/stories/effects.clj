@@ -25,14 +25,15 @@
   (assoc-in story thing-type (conj (get-in story thing-type) thing)))
 
 (defn format-output [text]
-  [:output text])
+  text)
 
 (defn story-effects [story]
-  {:output (defn effect-output [output-text]
+  {:output (defn effect-output [& output-text]
              (let [output-buffer (if (empty? (:output (:state story)))
                                    []
                                    (:output (:state story)))]
-               (assoc-in story [:state :output] (conj output-buffer output-text))))
+               (assoc-in story [:state :output] (conj output-buffer (format-output output-text)))))
+
    :pop-event (defn pop-event-queue [yes]
                 (if yes
                   (if (not (empty? (get-in story [:state :events])))
@@ -56,14 +57,25 @@
                 (assoc story :counter (inc (let [c (:counter story)]
                                              (if (number? c) c 0)
                                              ))))
+   :quality (defn alter-quality [action place qual]
+              (let [a (case action
+                        :increment inc
+                        :decrement #(- % 1)
+                        :erase (fn [_] 0)
+                        (fn [i] i))
+                    p (case place  ; todo: add qualities to characters and events
+                        :scene [:state :scene :qualities qual]
+                        :state [:state :qualities qual]
+                        nil)]
+                (if p
+                  (assoc-in story p (a (get-in story p)))
+                  )))
    :exit-inward (defn embed-story [substory]
                    (assoc-in (assoc-in story [:state :subgenerator] substory) [:state :exit] :inward))
    :exit-outward (defn exit-outward [_]
                    (assoc-in story [:state :exit] :outward))
 
    })
-
-(number? (:counter {}))
 
 ;; --- Process the Effects ---
 ;; Called with the argument of the story-generator
@@ -91,3 +103,5 @@ the effect's argument."
          (if (ifn? effect-fn) ; if it isn't a function (because of, say, a failed effects-map lookup) then bail and return the unmodified story
            (recur (apply effect-fn (rest first-effect)) (rest el))
            (recur s (rest el)))))))
+
+

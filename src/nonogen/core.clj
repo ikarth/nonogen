@@ -10,12 +10,21 @@
 
 (println "\nRunning...")
 
-(print (apply str "\n\n"
-              (:output
- (nth (iterate gens/process
- (gens/insert (gens/make-generator-stack)
-              (nights/add-event (nights/add-scene (nights/make-story (nights/make-characters))
-                                                  {:tags {:storyteller "Scheherazade"}})
-                                {:tags {:storytelling-beginning true}})))
-     30))))
 
+(defn make-book []
+  (:output
+   (nth
+      (iterate gens/process
+  (gens/insert (gens/make-generator-stack)
+               (nights/make-basic-story
+               )))
+        600)))
+
+
+(defn make-novel []
+  (time
+    (spit "texts\\output\\NoNoGen2014-003.markdown"
+          (apply str (flatten (make-book)))))
+  (print "\nDone\n"))
+
+(make-novel)

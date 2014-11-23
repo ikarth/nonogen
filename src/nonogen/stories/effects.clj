@@ -77,6 +77,10 @@
 
    })
 
+(defn increment-seed [story]
+  (let [seed (get-in story [:state :seed])]
+    (assoc-in story [:state :seed] (+ 1 seed))))
+
 ;; --- Process the Effects ---
 ;; Called with the argument of the story-generator
 ;; Take the vector of Effects
@@ -92,9 +96,8 @@ and should start with a function or a keyword that reduces to a function
 via the story-effects map. The rest of the vector is passed to the fn as
 the effect's argument."
   [story effects-list]
-   (loop [s story
+   (loop [s (increment-seed story)
           el effects-list]
-     ;(clojure.pprint/pprint el)
      (if (empty? el) ;empty vector? we're done
        s
        (let [first-effect (first el)

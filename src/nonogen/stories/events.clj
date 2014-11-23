@@ -30,8 +30,6 @@ returning the vector of effects of the first event in the queue and popping
 that event off the queue."
   [story storyon-deck]
   (let [tags (nonogen.stories.predicates/get-story-tags story)] ;todo: properly implement getting tags
-    ;(clojure.pprint/pprint tags)
-    ;(clojure.pprint/pprint storyon-deck)
     (reduce
      #(into %1 (get %2 :result))
      []

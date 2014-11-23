@@ -46,7 +46,8 @@
     (case exit
       :outward nil
       :inplace [story-generator]
-      :inward [(assoc-in story-generator [:state :subgenerator] nil) (:subgenerator (:state story-generator)) ] ; the order is important!
+      :inward [(assoc-in story-generator [:state :subgenerator] nil)
+               (assoc-in (get-in story-generator [:state :subgenerator]) [:state :seed] (get-in story-generator [:state :seed])) ] ; the order is important!
       :forward [(:inward (:state story-generator))]
       [story-generator])))
 
@@ -68,9 +69,10 @@
    (make-story {:characters [] :scenes [] :events [] :output []} (fn [g] (story g))))
   ([characters]
    (make-story {:characters characters :scenes [] :events [] :output []} (fn [g] (story g))))
-  ([{:keys [characters scenes events output]} generator]
+  ([{:keys [characters scenes events output depth]} generator]
    (gens/make-generator
-    {:state {:seed (rand 99999999)
+    {:state {
+             :seed -1;(rand 99999999)
              :characters characters
              :scenes scenes
              :events events
@@ -105,13 +107,14 @@
 
 (defn make-basic-story []
   (add-event (add-scene (make-story (make-characters))
-                        {:tags {:storyteller "Scheherazade" :reality-prime true}})
+                        {:tags {:storyteller "Scheherazade"}})
              {:tags {:event :story-introduction}}))
 
 
 
 (defn make-event [event-map]
-  (merge event-map {:seed 7}));(hash (str event-map))}))
+  event-map)
+  ;(merge event-map {:seed 7}));(hash (str event-map))}))
 
 ;;;
 ;;; Storyon Library

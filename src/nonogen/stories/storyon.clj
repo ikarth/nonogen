@@ -46,10 +46,10 @@
 
 (defn select-storyons [storyon-deck tags]
   (if (:singular-selection tags)
-    (let [valid-storyons (filter #(not (nil? %)) storyon-deck)]
-      ;(clojure.inspector/inspect-tree (take 1 (simple/sample valid-storyons)))
-      (print (get tags :seed))
-      (into [] (take 1 (simple/sample valid-storyons)))
+    (let [valid-storyons (filter #(not (nil? %)) storyon-deck)
+          seed (get tags :seed)]
+      (print (str seed " "))
+      (into [] (take 1 (simple/sample valid-storyons :seed seed)))
       )
     storyon-deck
     ))

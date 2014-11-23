@@ -18,15 +18,16 @@
   (:output
    (nth
       (iterate gens/process
-  (gens/insert (gens/make-generator-stack)
-               (nights/make-basic-story
-               )))
-        600)))
+               (gens/insert
+                (gens/make-generator-stack)
+                (nights/add-scene (nights/make-basic-story)
+                                  {:tags {:storyteller "Scheherazade" :reality-prime true}})))
+    600)))
 
 
 (defn make-novel []
   (time
-    (spit "texts\\output\\NoNoGen2014-004.markdown"
+    (spit "texts\\output\\NoNoGen2014-005.markdown"
           (apply str (flatten (make-book)))))
   (print "\nDone\n"))
 

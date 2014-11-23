@@ -55,7 +55,7 @@
                       after-feedback
                       (into-conj after-feedback (:generator gen-result)))]
       ;(clojure.pprint/pprint "------------Process-----------")
-      (print ".")
+      ;(print ".")
       {:generator-stack gen-stack :output new-output})))
 
 (defn insert [generator-stack addition]

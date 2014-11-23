@@ -6,3 +6,8 @@
 
 
 (UUID/randomUUID)
+
+(defn get-random-seed [])
+
+
+(defn get-seed-from-value [])

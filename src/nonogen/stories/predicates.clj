@@ -24,7 +24,7 @@
         ]
     ;(print (str (:seed state) (:seed event)))
     (merge
-     {:seed (:seed state)}
+     {:seed (get state :seed)} ; todo: calculate this from the current story-state
      {:current-character (:name current-character)}
      (:tags state)
      (:tags scene)
@@ -50,7 +50,7 @@
               func (expand-one-predicate f conversions)]
           (if (ifn? func)
             (fn [r] (func (first (rest p)) r))
-            (fn [_] "vector malformed")))
+            (fn [_] (str "vector malformed: " f ))))
 
         (keyword? p) (recur (p conversions))
         (ifn? p) p

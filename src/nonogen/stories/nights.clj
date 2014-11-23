@@ -70,7 +70,8 @@
    (make-story {:characters characters :scenes [] :events [] :output []} (fn [g] (story g))))
   ([{:keys [characters scenes events output]} generator]
    (gens/make-generator
-    {:state {:characters characters
+    {:state {:seed (rand 99999999)
+             :characters characters
              :scenes scenes
              :events events
              :output output
@@ -104,9 +105,13 @@
 
 (defn make-basic-story []
   (add-event (add-scene (make-story (make-characters))
-                        {:tags {:storyteller "Scheherazade"}})
+                        {:tags {:storyteller "Scheherazade" :reality-prime true}})
              {:tags {:event :story-introduction}}))
 
+
+
+(defn make-event [event-map]
+  (merge event-map {:seed 7}));(hash (str event-map))}))
 
 ;;;
 ;;; Storyon Library
@@ -118,13 +123,13 @@
    {:predicates [:at-least-one-character [:event :story-introduction]]
     :result [[:output "Once upon a time, there was [main-character-description] named [main-character-name]. " ]
              [:pop-event true]
-             [:add-event {:tags {:event :pick-next-scene :singular-selection true}}]
+             [:add-event (make-event {:tags {:event :pick-next-scene :singular-selection true}})]
              ]})
    (nonogen.stories.storyon/make-storyon
    {:predicates [[:event :pick-next-scene]]
     :result [[:output "[She] suggested that [she] should tell a story, because it was Alex's birthday. " ]
              [:pop-event true]
-             [:add-event {:tags {:event :storytelling-beginning :singular-selection true}}]
+             [:add-event (make-event {:tags {:event :storytelling-beginning :singular-selection true}})]
              ]})
    (nonogen.stories.storyon/make-storyon
    {:predicates [:not-current-character-is-storyteller [:event :storytelling-beginning]]
@@ -136,23 +141,23 @@
     :result [[:output "So [she] began, \"It is related, O august king, that...\" "]
              [:pop-event true]
              [:quality :erase :scene :anticipation]
-             [:add-event {:tags {:event :storytelling-ready-to-tell :singular-selection true}}]
+             [:add-event (make-event {:tags {:event :storytelling-ready-to-tell :singular-selection true}})]
              ]})
    (nonogen.stories.storyon/make-storyon
    {:predicates [:current-character-is-storyteller [:event :storytelling-ready-to-tell]]
     :result [[:output "Then [she] told the following story:\n\n"]
              [:pop-event true]
-             [:add-event {:tags {:event :storytelling-ending :singular-selection true}}]
+             [:add-event (make-event {:tags {:event :storytelling-ending :singular-selection true}})]
              [:exit-inward (nonogen.stories.nights/make-basic-story)]
              ]})
    (nonogen.stories.storyon/make-storyon
    {:predicates [:current-character-is-storyteller [:event :storytelling-ready-to-tell]]
     :result [[:output "And [she] told a very exciting story.\n\n"]
              [:pop-event true]
-             [:add-event {:tags {:event :storytelling-ending :singular-selection true}}]
+             [:add-event (make-event {:tags {:event :storytelling-ending :singular-selection true}})]
              ]})
    (nonogen.stories.storyon/make-storyon
-   {:predicates [:current-character-is-storyteller [:event :storytelling-ending]]
+   {:predicates [:current-character-is-storyteller [:event :storytelling-ending] [:not-tag :reality-prime]]
     :result [[:output "\"And that was how it happened,\" [she] said, ending [her] story.\n\n"]
              [:pop-event true]
              [:exit :outward]
@@ -161,7 +166,7 @@
    {:predicates [:current-character-is-storyteller [:event :storytelling-ending]]
     :result [[:output "Then [she] ended [her] story, saying, \"But there is another tale which is more marvelous still.\"\n\n"]
              [:pop-event true]
-             [:add-event {:tags {:event :storytelling-beginning :singular-selection true}}]
+             [:add-event (make-event {:tags {:event :storytelling-beginning :singular-selection true}})]
              [:exit :inplace]
              ]})
    ])
@@ -187,7 +192,7 @@
                 (add-scene (make-story (make-characters)) {:tags {:storyteller "Scheherazade"}})
                 {:tags {:event :story-introduction}}
                )))
-   9)
+   6)
 
 
 

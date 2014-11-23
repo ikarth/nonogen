@@ -63,8 +63,9 @@
     (into-conj (get generator-stack :generator-stack) addition)))
 
 (defn make-generator-stack []
-  {:generator-stack []
-        :output []})
+  {:seed nil
+   :generator-stack []
+   :output []})
 
 
 

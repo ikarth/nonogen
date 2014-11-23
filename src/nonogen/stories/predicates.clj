@@ -22,7 +22,9 @@
         current-character (get-current-character story)
         ;event-tags ((:get-tags (peek (get state :events))))
         ]
+    ;(print (str (:seed state) (:seed event)))
     (merge
+     {:seed (:seed state)}
      {:current-character (:name current-character)}
      (:tags state)
      (:tags scene)
@@ -74,11 +76,16 @@
             (= (get tags :event) tag-value-to-look-for))
    :not-current-character-is-storyteller (fn [_] false)
    :at-least-one-character (fn [_] true)
+   :not-tag (defn not-tag [tag-to-look-for tags]
+              (not (get tags tag-to-look-for)))
+   :is-tag (defn is-tag [tag-to-look-for tags]
+              (get tags tag-to-look-for))
    })
 
 (defn expand-predicates-default [predicates]
   (let [expand (expand-predicates predicates predicate-conversions)]
     expand))
+
 
 ;;;
 ;;; Sketching

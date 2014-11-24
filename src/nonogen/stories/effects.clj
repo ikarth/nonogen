@@ -24,7 +24,7 @@
 (defn add-to-story [story thing-type thing]
   (assoc-in story thing-type (conj (get-in story thing-type) thing)))
 
-(defn format-output [text]
+(defn format-output [story text]
   text)
 
 (defn story-effects [story]
@@ -32,7 +32,7 @@
              (let [output-buffer (if (empty? (:output (:state story)))
                                    []
                                    (:output (:state story)))]
-               (assoc-in story [:state :output] (conj output-buffer (format-output output-text)))))
+               (assoc-in story [:state :output] (conj output-buffer (format-output story output-text)))))
 
    :pop-event (defn pop-event-queue [yes]
                 (if yes
@@ -106,5 +106,3 @@ the effect's argument."
          (if (ifn? effect-fn) ; if it isn't a function (because of, say, a failed effects-map lookup) then bail and return the unmodified story
            (recur (apply effect-fn (rest first-effect)) (rest el))
            (recur s (rest el)))))))
-
-

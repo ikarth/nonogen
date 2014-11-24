@@ -5,6 +5,7 @@
              [nonogen.stories.events]
              [nonogen.stories.effects]
              [nonogen.stories.storyon]
+             [nonogen.random :as random]
              ))
 
 ;;;;;
@@ -72,7 +73,7 @@
   ([{:keys [characters scenes events output depth]} generator]
    (gens/make-generator
     {:state {
-             :seed -1;(rand 99999999)
+             :seed (random/get-random-seed)
              :characters characters
              :scenes scenes
              :events events

@@ -3,10 +3,8 @@
              [clojure.inspector]
              [nonogen.generators :as gens]
              [nonogen.stories.predicates]
+             [nonogen.random :as random]
              [clojure.repl]
-             (bigml.sampling [simple :as simple]
-                             [reservoir :as reservoir]
-                             [stream :as stream])
              ))
 
 ;;;
@@ -48,10 +46,9 @@
   (if (:singular-selection tags)
     (let [valid-storyons (filter #(not (nil? %)) storyon-deck)
           seed (get tags :seed)]
-      (print (str seed " "))
-      (into [] (take 1 (simple/sample valid-storyons :seed seed)))
+      (into [] (take 1 (random/shuffle-randomly valid-storyons seed)))
       )
     storyon-deck
     ))
 
-(take 1 (simple/sample [1 2 3 4 5] :seed 9999))
+;(take 1 (simple/sample [1 2 3 4 5] :seed 9999))

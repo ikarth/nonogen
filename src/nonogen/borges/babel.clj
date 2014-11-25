@@ -1,9 +1,5 @@
-(ns nonogen.babel
-  (:require [clojure.pprint]
-            )
-  (:use [clojure.pprint]
-        )
-  (:gen-class))
+(ns nonogen.borges.babel
+  (:require [nonogen.generators :as gens]))
 
 (defn generate-character []
   #(rand-nth "ABCDEFGHIJKLMNOPQRSTUVWXYZ,. "))
@@ -22,4 +18,22 @@
 
 ;(create-babel-text)
 
-(babel-page)
+;(babel-page)
+
+(defn babel-gen [babel-generator]
+  {:output (babel-page)
+   :generator nil
+   :feedback nil})
+
+(defn make-babel []
+  (gens/make-generator
+   {:state {}
+    :generator babel-gen}))
+
+
+ (nth
+  (iterate gens/process
+(gens/insert   (gens/insert (gens/make-generator-stack)
+               (make-babel)
+                              ) (make-babel)))
+   6)

@@ -6,6 +6,7 @@
              [nonogen.stories.effects]
              [nonogen.stories.storyon]
              [nonogen.random :as random]
+             [nonogen.borges.babel]
              ))
 
 ;;;;;
@@ -157,6 +158,13 @@
    (nonogen.stories.storyon/make-storyon
    {:predicates [:current-character-is-storyteller [:event :storytelling-ready-to-tell]]
     :result [[:output "And [she] told a very exciting story.\n\n"]
+             [:pop-event true]
+             [:add-event (make-event {:tags {:event :storytelling-ending :singular-selection true}})]
+             ]})
+   (nonogen.stories.storyon/make-storyon
+   {:predicates [:current-character-is-storyteller [:event :storytelling-ready-to-tell]]
+    :result [[:output "Then [she] opened her book and read them the following page:\n\n"]
+             [:exit-inward (nonogen.borges.babel/make-babel)]
              [:pop-event true]
              [:add-event (make-event {:tags {:event :storytelling-ending :singular-selection true}})]
              ]})

@@ -25,7 +25,7 @@
     ;(print (str (:seed state) (:seed event)))
     (merge
      {:seed (get state :seed)} ; todo: calculate this from the current story-state
-     {:current-character (:name current-character)}
+     {:current-character current-character}
      (:tags state)
      (:tags scene)
      (:tags event)
@@ -67,7 +67,7 @@
 ;;;
 
 (def predicate-conversions
-  {:current-character-is-storyteller #(= (:storyteller %) (:current-character %)) ;todo: add scenes + :storyteller tag
+  {:current-character-is-storyteller #(= (:storyteller %) (:name (:current-character %))) ;todo: add scenes + :storyteller tag
    :test :current-character-is-storyteller
    ;:storytelling-beginning #(contains? % :storytelling-beginning)
    ;:storytelling-ending #(contains? % :storytelling-ending)

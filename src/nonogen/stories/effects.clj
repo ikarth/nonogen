@@ -1,5 +1,6 @@
 (ns nonogen.stories.effects
    (:require [clojure.pprint]
+             [nonogen.stories.output]
              ))
 
 ;;;
@@ -25,7 +26,7 @@
   (assoc-in story thing-type (conj (get-in story thing-type) thing)))
 
 (defn format-output [story text]
-  text)
+  (nonogen.stories.output/parse story text))
 
 (defn story-effects [story]
   {:output (defn effect-output [& output-text]
@@ -71,7 +72,8 @@
                   (assoc-in story p (a (get-in story p)))
                   )))
    :exit-inward (defn embed-story [substory]
-                   (assoc-in (assoc-in story [:state :subgenerator] substory) [:state :exit] :inward))
+                   (let [sub (if (ifn? substory) (substory) substory)]
+                     (assoc-in (assoc-in story [:state :subgenerator] sub) [:state :exit] :inward)))
    :exit-outward (defn exit-outward [_]
                    (assoc-in story [:state :exit] :outward))
 

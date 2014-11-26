@@ -2,7 +2,7 @@
    (:require [clojure.pprint]
              [nonogen.generators :as gens]
              [nonogen.stories.nights :as nights]
-             ;[nonogen.stories.story]
+             [nonogen.stories.story]
              ;[caesium.crypto.generichash]
              ;[com.github.emboss/siphash-java]
 
@@ -21,9 +21,11 @@
       (iterate gens/process
                (gens/insert
                 (gens/make-generator-stack)
-                (nights/add-scene (nights/make-basic-story)
-                                  {:tags {:storyteller "Scheherazade" :reality-prime true}})))
+                (nonogen.stories.story/add-scene (nights/a-thousand-and-one-nights)
+                                  {:tags {:storyteller "Scheherazade" :reality-prime true}})
+                ))
     600)))
+
 
 
 (defn make-novel []

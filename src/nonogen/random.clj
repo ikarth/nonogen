@@ -11,7 +11,7 @@
 (UUID/randomUUID)
 
 (defn get-random-seed []
-  -1000;(rand 99999999)
+  (rand 99999999)
   )
 
 

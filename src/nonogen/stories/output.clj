@@ -10,44 +10,102 @@
 ;; of mostly text data and process it. If it's text, send it back as just text. If it's
 ;; a function, call the function with the data from the current story state.
 
-(defn She [story])
-(defn she [story]
-  "she")
-(defn her [story])
+(defn get-tags [story]
+  (nonogen.stories.predicates/get-story-tags story))
 
-(defn protagonist [story])
-(defn protagonist-name [story])
-(defn protagonist-description [story])
-(defn storyteller-name [story]
-  (:storyteller (nonogen.stories.predicates/get-story-tags story)))
+(defmacro wrap-get-tags [expr]
+  `(fn [story#]
+     (let [tags# (nonogen.stories.predicates/get-story-tags story#)]
+       (get tags# ~expr))))
 
-(defn vary [story & text]
-  (apply str (first (random/shuffle-randomly text (:seed (nonogen.stories.predicates/get-story-tags story))))))
+(defn storyteller-name []
+  (fn [story] (:storyteller (get-tags story))))
 
+;(defn storyteller-name [] (wrap-get-tags :storyteller))
+
+(defn gender-pronoun [gender]
+  (gender {:male "he" :female "she"}))
+
+(defn She []
+  (fn [story]
+    (let [protagonist (:current-character (get-tags story))]
+      (:name protagonist))))
+
+(defn she []
+  (fn [story]
+    (let [protagonist (:current-character (get-tags story))]
+      ;(:name protagonist)
+      ((:gender (:tags protagonist)) {:male "he" :female "she"})
+      )))
+
+(defn her []
+  (fn [story]
+    (let [protagonist (:current-character (get-tags story))]
+      ;(str (:name protagonist) "'s")
+      ((:gender (:tags protagonist)) {:male "his" :female "her"})
+      )))
+
+(defn current-character-name []
+  (fn [story]
+    (let [protagonist (:current-character (get-tags story))]
+      (:name protagonist))))
+
+(defn a-current-character-description []
+  (fn [story]
+    (let [protagonist (:current-character (get-tags story))]
+      (:description (:tags protagonist)))))
+
+(defn vary [& text]
+  (fn [story]
+    (apply str (first (random/shuffle-randomly
+                       text (:seed (nonogen.stories.predicates/get-story-tags
+                                    story)))))))
+
+;((vary "test" "two" "three")
+; {:state {:seed -1, :characters [{:name "Shahryar", :tags {:gender :male}} {:name "Scheherazade", :tags {:stories [], :gender :female, :can-tell-stories? true}}], :scenes [{:tags {:storyteller "Scheherazade"}}], :events [{:tags {:event :story-introduction}}], :output [], :exit nil}, :generator nil}
+; )
+
+;((vary "6" "9")
+; {:state {:seed nil, :characters [{:name "Shahryar", :tags {:gender :male}} {:name "Scheherazade", :tags {:stories [], :gender :female, :can-tell-stories? true}}], :scenes [{:tags {:storyteller "Scheherazade"}}], :events [{:tags {:event :story-introduction}}], :output [], :exit nil}, :generator nil}
+; )
+
+;(defmacro output [& data]
+;  `[~@data])
 
 (defn parse-one [story data]
   (if (string? data)
     data
     (if (ifn? data)
-      (-> story data)
+      ((data) story)
       data)
     ))
 
 (defn parse [story output-data]
   (apply str
-           (map
+         (map
           (partial parse-one story)
           output-data)))
-
-
-;(defmacro output [& output-data]
-;  `(list ~@output-data))
-
-(fn? (first '(+ 1 1)))
 
 ;;;
 ;;; Sketching
 ;;;
+
+(def test-story {:state {:scenes [{:tags {:storyteller "Test"}}]}})
+
+
+(parse test-story ["test" "one" "two" storyteller-name])
+
+(parse test-story ["one" "two"])
+
+
+
+
+
+
+
+
+
+
 
 
 ;; (output "text" (function-to-be-evaluted-later parameters))
@@ -60,10 +118,13 @@
 ;(defn output [& data]
 ;  `[~@data])
 
-(defmacro output [& data]
-  `[~@data])
 
 
+(defn foo [arg1]
+  (fn [state] (+ state arg1)))
 
-(output "test" "test" she)
-(parse example-story (output "test" "test" storyteller-name '(vary "one" "two")))
+((foo (+ 9 6)) 9)
+
+
+;(output "test" "test" she)
+;(parse example-story (output "test" "test" storyteller-name '(vary "one" "two")))

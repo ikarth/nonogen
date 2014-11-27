@@ -2,6 +2,7 @@
    (:require [nonogen.generators :as gens]
              [nonogen.stories.events]
              [nonogen.stories.effects]
+             [nonogen.stories.characters]
              [nonogen.random :as random]
              ))
 
@@ -54,7 +55,8 @@
 
 (defn story [story-generator storyon-lib]
   (let [output
-    (let [story-gen ((generate-story-fn storyon-lib) story-generator)]
+    (let [seed (:seed (:state story-generator))
+          story-gen ((generate-story-fn storyon-lib) story-generator)]
       ;(clojure.pprint/pprint story-gen)
       {:output (:output (:state story-gen))
        :generator (exit-state story-gen)
@@ -112,9 +114,22 @@
                         {:tags {:storyteller "Scheherazade"}})
              {:tags {:event :story-introduction}}))
 
+(defn make-storytelling-story [storyon-lib seed]
+  (let [char-list (nonogen.stories.characters/make-character-list 3 seed)
+        teller (nonogen.stories.characters/pick-storyteller char-list seed)]
+  (make-story {:characters char-list
+               :scenes [{:tags {:storyteller teller}}]
+               :events [{:tags {:event :story-introduction}}]
+               :output []}
+              storyon-lib)))
 
 
-
+(defn make-thousand-nights-story [storyon-lib]
+   (make-story
+    {:characters (nonogen.stories.characters/make-thousand-nights-character-list)
+     :scenes [{:tags {:storyteller "Scheherazade" :reality-prime true}}]
+     :events [{:tags {:event :story-introduction}}]
+     :output []} storyon-lib))
 
 
 

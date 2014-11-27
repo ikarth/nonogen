@@ -11,15 +11,15 @@
 (defn get-current-event [story]
   (peek (get-in story [:state :events])))
 
-(defn get-current-character [story]
-  (peek (get-in story [:state :characters]))) ; todo: pick current character by event
+;(defn get-current-character [story character]
+;  ;(peek (get-in story [:state :characters]))) ; todo: pick current character by event
 
 
 (defn get-story-tags [story]
   (let [state (get story :state)
         scene (peek (get state :scenes))
         event (get-current-event story) ;todo: add support for event tags
-        current-character (get-current-character story)
+        current-character (:current-character (:state story))
         ;event-tags ((:get-tags (peek (get state :events))))
         ]
     ;(print (str (:seed state) (:seed event)))
@@ -29,7 +29,8 @@
      (:tags state)
      (:tags scene)
      (:tags event)
-     (:tags current-character))))
+     (:tags current-character)
+     )))
 
 
 ;; --- Get Tags ---

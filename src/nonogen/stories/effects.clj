@@ -1,7 +1,26 @@
 (ns nonogen.stories.effects
-   (:require [clojure.pprint]
-             [nonogen.stories.output]
-             ))
+  (:require [clojure.pprint]
+            [nonogen.stories.output]
+            ))
+
+(defn positions [pred coll]
+  (keep-indexed #(when (pred %2) %1) coll))
+
+(defn next-in-coll
+  "Takes a collection and an item to match, finds the first instance of
+  that item, and return the thing that follows it in the collection."
+  [coll match]
+  (if (nil? match)
+    (next-in-coll coll 1)
+    (let [cur (positions #(= % match) coll)]
+      (if (< (count cur) 1)
+        match
+        (first (subvec (into [] coll) (mod (inc (first cur)) (count coll))))))))
+
+(defn if-not-included [pred check-for otherwise]
+  (if (some check-for)
+    pred
+    (conj pred [otherwise])))
 
 ;;;
 ;;; Effects
@@ -72,10 +91,23 @@
                   (assoc-in story p (a (get-in story p)))
                   )))
    :exit-inward (defn embed-story [substory]
-                   (let [sub (if (ifn? substory) (substory) substory)]
-                     (assoc-in (assoc-in story [:state :subgenerator] sub) [:state :exit] :inward)))
+                  (let [sub (if (ifn? substory) (substory (:seed (:state story))) substory)]
+                    (assoc-in (assoc-in story [:state :subgenerator] sub) [:state :exit] :inward)))
    :exit-outward (defn exit-outward [_]
                    (assoc-in story [:state :exit] :outward))
+   :advance-character (defn advance-character
+                        "Look at the :current-character, and swap in the next valid character instead."
+                        [p]
+                        (if (false? p)
+                          story
+                          (assoc-in story [:state :current-character]
+                                    (let [prev (:current-character (:state story))
+                                          charlist (:characters (:state story))]
+                                      (if (nil? prev)
+                                        (peek charlist)
+                                        (next-in-coll charlist prev)))
+
+                                    )))
 
    })
 
@@ -91,20 +123,20 @@
 
 (defn call-effects
   "Processes an effects list and applies the changes to the story. Takes
-a story (to be returned when altered) and an ordered vector of effects,
-and returns the new story.
+  a story (to be returned when altered) and an ordered vector of effects,
+  and returns the new story.
   The effects-list is a vector of vectors. Each subvector is an effect,
-and should start with a function or a keyword that reduces to a function
-via the story-effects map. The rest of the vector is passed to the fn as
-the effect's argument."
+  and should start with a function or a keyword that reduces to a function
+  via the story-effects map. The rest of the vector is passed to the fn as
+  the effect's argument."
   [story effects-list]
-   (loop [s (increment-seed story)
-          el effects-list]
-     (if (empty? el) ;empty vector? we're done
-       s
-       (let [first-effect (first el)
-             head (first first-effect)
-             effect-fn (if (keyword? head) (get (story-effects s) head) head)] ; if it's a keyword, grab it from the map; <- note that story-effects is scoped from above
-         (if (ifn? effect-fn) ; if it isn't a function (because of, say, a failed effects-map lookup) then bail and return the unmodified story
-           (recur (apply effect-fn (rest first-effect)) (rest el))
-           (recur s (rest el)))))))
+  (loop [s (increment-seed story)
+         el effects-list]
+    (if (empty? el) ;empty vector? we're done
+      s
+      (let [first-effect (first el)
+            head (first first-effect)
+            effect-fn (if (keyword? head) (get (story-effects s) head) head)] ; if it's a keyword, grab it from the map; <- note that story-effects is scoped from above
+        (if (ifn? effect-fn) ; if it isn't a function (because of, say, a failed effects-map lookup) then bail and return the unmodified story
+          (recur (apply effect-fn (rest first-effect)) (rest el))
+          (recur s (rest el)))))))

@@ -8,8 +8,18 @@
              ))
 
 ;;;
+;;; Utilities
+;;;
+
+(defn if-not-included [coll check-for otherwise]
+  (if (some #(= % check-for) coll)
+    coll
+    (conj coll otherwise)))
+
+;;;
 ;;; Storyons
 ;;;
+
 
 (defn make-storyon
   ([]
@@ -22,13 +32,16 @@
    {;:uuid nil;((print-str predicates) (print-str result))
     :name nil
     :predicates predicates
-    :result result}))
+    :result (if-not-included result [:surpress-advance-character true] [:advance-character true])}))
 
 ;;;
 ;;; Filtering and Selecting
 ;;;
 
 (defn filter-storyons [storyon-deck tags]
+  ;(clojure.pprint/pprint "--------- Filter ---------")
+  ;(clojure.pprint/pprint storyon-deck)
+  ;(clojure.pprint/pprint tags)
   (filter
    (fn [a-storyon]
      (not (some false?
@@ -43,6 +56,7 @@
    storyon-deck))
 
 (defn select-storyons [storyon-deck tags]
+  ;(clojure.pprint/pprint storyon-deck)
   (if (:singular-selection tags)
     (let [valid-storyons (filter #(not (nil? %)) storyon-deck)
           seed (get tags :seed)]

@@ -23,21 +23,39 @@
 ;; TODO: - process the map for additional effects (like auto-popping the queue unlesss specifically surpressed)
 ;; - return the resulting vector of effecs
 
+;; (defn per-character [story storyon-deck current-character]
+;;   (let [tags (nonogen.stories.predicates/get-story-tags story current-character)]
+;;     (reduce
+;;      #(into %1 (get %2 :result))
+;;      []
+;;      (nonogen.stories.storyon/select-storyons
+;;       (nonogen.stories.storyon/filter-storyons storyon-deck tags)
+;;       tags))))
+
+;; (defn events-to-effects-per-character
+;; "  Takes a story and a deck of storyons and processes the story's event queue,
+;; returning the vector of effects of the first event in the queue and popping
+;; that event off the queue."
+;;   [story storyon-deck]
+;;   (map
+;;    #(per-character story storyon-deck %)
+;;    (:characters (:state story))))
 
 (defn events-to-effects
 "  Takes a story and a deck of storyons and processes the story's event queue,
 returning the vector of effects of the first event in the queue and popping
 that event off the queue."
   [story storyon-deck]
-  (let [tags (nonogen.stories.predicates/get-story-tags story)] ;todo: properly implement getting tags
+  (let [effects-list
+  (let [tags (nonogen.stories.predicates/get-story-tags story)]
     (reduce
      #(into %1 (get %2 :result))
      []
      (nonogen.stories.storyon/select-storyons
       (nonogen.stories.storyon/filter-storyons storyon-deck tags)
-      tags))))
-
-(defn default-events
-  [{:tags []}]
-
-  )
+      tags)))
+  ]
+  (println effects-list)
+  (if (empty? effects-list)
+    [[:advance-character true]] ; if no valid storyon is found, perform default actions... todo: regularlize default actions
+    effects-list)))

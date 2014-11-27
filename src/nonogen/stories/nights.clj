@@ -10,7 +10,8 @@
 
 
 (defn a-thousand-and-one-nights []
-  (nonogen.stories.story/make-basic-story nonogen.stories.storyon-library/example-storyons))
+  (nonogen.stories.story/make-thousand-nights-story
+   nonogen.stories.storyon-library/example-storyons))
 
 
 ;(:make-basic-story (nonogen.stories.story/make-make-story nonogen.stories.storyon-library/example-storyons))
@@ -42,6 +43,15 @@
                            (a-thousand-and-one-nights)))
      30)
 
+
+ (nth
+      (iterate gens/process
+               (gens/insert
+                (gens/make-generator-stack)
+                (a-thousand-and-one-nights)
+
+                ))
+    600)
 
  ;(clojure.inspector/inspect-tree
 

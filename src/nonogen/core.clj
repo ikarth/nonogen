@@ -21,16 +21,19 @@
       (iterate gens/process
                (gens/insert
                 (gens/make-generator-stack)
-                (nonogen.stories.story/add-scene (nights/a-thousand-and-one-nights)
-                                  {:tags {:storyteller "Scheherazade" :reality-prime true}})
+                (nights/a-thousand-and-one-nights)
+
                 ))
-    600)))
+    60)))
+
+Double/POSITIVE_INFINITY
 
 
+(/ Double/POSITIVE_INFINITY 50000M)
 
 (defn make-novel []
   (time
-    (spit "texts\\output\\NoNoGen2014-005.markdown"
+    (spit "texts\\output\\NoNoGen2014-006.markdown"
           (apply str (flatten (make-book)))))
   (print "\nDone\n"))
 

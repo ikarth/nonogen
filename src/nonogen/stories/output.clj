@@ -2,6 +2,7 @@
    (:require [clojure.pprint]
              [nonogen.random :as random]
              [nonogen.stories.predicates]
+             [clojure.string]
              ))
 
 
@@ -19,7 +20,9 @@
        (get tags# ~expr))))
 
 (defn storyteller-name []
-  (fn [story] (:storyteller (get-tags story))))
+  (fn [story]
+    (:storyteller (get-tags story))
+    ))
 
 ;(defn storyteller-name [] (wrap-get-tags :storyteller))
 
@@ -34,7 +37,7 @@
 (defn she []
   (fn [story]
     (let [protagonist (:current-character (get-tags story))]
-      ;(:name protagonist)
+      ;protagonist
       ((:gender (:tags protagonist)) {:male "he" :female "she"})
       )))
 
@@ -60,6 +63,17 @@
     (apply str (first (random/shuffle-randomly
                        text (:seed (nonogen.stories.predicates/get-story-tags
                                     story)))))))
+
+(defn describe-all-characters []
+  (fn [story]
+    (let [char-desc (map
+     (fn [c] (apply str (:description (:tags c)) " named " (:name c)))
+       (:characters (:state story)))]
+      (if (< (count char-desc) 2)
+        (apply str "there was " (first char-desc))
+        (apply str "there was " (clojure.string/join ", " (butlast char-desc)) " and " (last char-desc))
+      ))))
+
 
 ;((vary "test" "two" "three")
 ; {:state {:seed -1, :characters [{:name "Shahryar", :tags {:gender :male}} {:name "Scheherazade", :tags {:stories [], :gender :female, :can-tell-stories? true}}], :scenes [{:tags {:storyteller "Scheherazade"}}], :events [{:tags {:event :story-introduction}}], :output [], :exit nil}, :generator nil}

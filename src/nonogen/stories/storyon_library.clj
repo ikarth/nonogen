@@ -14,15 +14,16 @@
 (declare make-story)
 (declare example-storyons)
 
-(defn make-story []
-  (nonogen.stories.story/make-basic-story example-storyons))
+(defn make-story [seed]
+  (nonogen.stories.story/make-storytelling-story example-storyons seed))
 
-(make-story)
+;(make-story nil)
 
 (def example-storyons
   [(nonogen.stories.storyon/make-storyon
    {:predicates [:at-least-one-character [:event :story-introduction]]
-    :result [[:output "Once upon a time, there was " a-current-character-description " named " current-character-name ". " ]
+    :result [[:output "Once upon a time, " ]
+             [:output describe-all-characters ". "]
              [:pop-event true]
              [:add-event (story/make-event {:tags {:event :pick-next-scene :singular-selection true}})]
              ]})
@@ -46,14 +47,14 @@
              ]})
    (nonogen.stories.storyon/make-storyon
    {:predicates [:current-character-is-storyteller [:event :storytelling-ready-to-tell]]
-    :result [[:output "Then " nonogen.stories.output/storyteller-name " told the following story:\n\n"]
+    :result [[:output "This is the story that " nonogen.stories.output/storyteller-name " told:\n\n"]
              [:pop-event true]
              [:add-event (story/make-event {:tags {:event :storytelling-ending :singular-selection true}})]
              [:exit-inward make-story]
              ]})
    (nonogen.stories.storyon/make-storyon
    {:predicates [:current-character-is-storyteller [:event :storytelling-ready-to-tell]]
-    :result [[:output "And " storyteller-name " told a very exciting story.\n\n"]
+    :result [[:output "And " storyteller-name " told a very exciting story. "]
              [:pop-event true]
              [:add-event (story/make-event {:tags {:event :storytelling-ending :singular-selection true}})]
              ]})
@@ -72,7 +73,7 @@
              ]})
    (nonogen.stories.storyon/make-storyon
    {:predicates [:current-character-is-storyteller [:event :storytelling-ending]]
-    :result [[:output "Then " she " ended " her " story, saying, \"But there is another tale which is more marvelous still.\"\n\n"]
+    :result [[:output "Then " storyteller-name " ended " her " story, saying, \"But there is another tale which is more marvelous still.\"\n\n"]
              [:pop-event true]
              [:add-event (story/make-event {:tags {:event :storytelling-beginning :singular-selection true}})]
              [:exit :inplace]

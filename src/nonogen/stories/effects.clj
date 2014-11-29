@@ -1,6 +1,7 @@
 (ns nonogen.stories.effects
   (:require [clojure.pprint]
             [nonogen.stories.output]
+            [nonogen.stories.labyrinth :as labyrinth]
             ))
 
 (defn positions [pred coll]
@@ -67,8 +68,10 @@
    :exit (defn exit-command [command]
            (assoc-in story [:state :exit] command))
    :feedback nil
+   :add-custom-tag (defn add-custom-predicate [thing]
+                    (assoc-in story [:state :custom-tags] (merge [] (get-in story [:state :custom-tags]) thing)))
    :add-state-tag (defn add-state-tag [thing]
-                    (assoc-in story [:state :tags] (merge (get-in story [:state :tags]) thing)))
+                    (assoc-in story [:state :tags] (merge {} (get-in story [:state :tags]) thing)))
    :remove-state-tag (defn remove-state-tag [thing]
                        (assoc-in story [:state :tags] (dissoc (get-in story [:state :tags]) thing)))
    :add-event (defn add-event [event]
@@ -77,6 +80,10 @@
                 (assoc story :counter (inc (let [c (:counter story)]
                                              (if (number? c) c 0)
                                              ))))
+   :walk-labyrinth (defn walk-labyrinth [_]
+                     (labyrinth/explore-labyrinth story))
+   :run-labyrinth (defn run-labyrinth [_]
+                     (labyrinth/run-through-labyrinth story))
    :quality (defn alter-quality [action place qual]
               (let [a (case action
                         :increment inc
@@ -91,7 +98,7 @@
                   (assoc-in story p (a (get-in story p)))
                   )))
    :exit-inward (defn embed-story [substory]
-                  (let [sub (if (ifn? substory) (substory (:seed (:state story))) substory)]
+                  (let [sub (if (ifn? substory) (substory story) substory)]
                     (assoc-in (assoc-in story [:state :subgenerator] sub) [:state :exit] :inward)))
    :exit-outward (defn exit-outward [_]
                    (assoc-in story [:state :exit] :outward))

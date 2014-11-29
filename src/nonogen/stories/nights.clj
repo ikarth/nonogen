@@ -24,6 +24,7 @@
 ;;;
 
 (a-thousand-and-one-nights)
+(get-in (a-thousand-and-one-nights) [:state :seed])
 
   (gens/insert (gens/make-generator-stack)
                (a-thousand-and-one-nights))

@@ -55,7 +55,6 @@ that event off the queue."
       (nonogen.stories.storyon/filter-storyons storyon-deck tags)
       tags)))
   ]
-  (println effects-list)
   (if (empty? effects-list)
     [[:advance-character true]] ; if no valid storyon is found, perform default actions... todo: regularlize default actions
     effects-list)))

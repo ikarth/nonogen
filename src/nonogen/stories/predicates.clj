@@ -22,7 +22,6 @@
         current-character (:current-character (:state story))
         ;event-tags ((:get-tags (peek (get state :events))))
         ]
-    ;(print (str (:seed state) (:seed event)))
     (merge
      {:seed (get state :seed)} ; todo: calculate this from the current story-state
      {:current-character current-character}
@@ -49,9 +48,10 @@
         (vector? p)
         (let [f (get conversions (first p))
               func (expand-one-predicate f conversions)]
-          (if (ifn? func)
+          (do ;(println func)
+           (if (ifn? func)
             (fn [r] (func (first (rest p)) r))
-            (fn [_] (str "vector malformed: " f ))))
+            (fn [_] (str "vector malformed: " f )))))
 
         (keyword? p) (recur (p conversions))
         (ifn? p) p
@@ -78,14 +78,17 @@
    :not-current-character-is-storyteller (fn [_] false)
    :at-least-one-character (fn [_] true)
    :not-tag (defn not-tag [tag-to-look-for tags]
-              (not (get tags tag-to-look-for)))
+              ;(println ":is-tag " tag-to-look-for "+" tags "=" (nil? (get tags tag-to-look-for)))
+              (nil? (get tags tag-to-look-for)))
    :is-tag (defn is-tag [tag-to-look-for tags]
-              (get tags tag-to-look-for))
+             ;(println ":is-tag " tag-to-look-for "+" tags "=" (not (nil? (get tags tag-to-look-for))))
+              (not (nil? (get tags tag-to-look-for))))
    })
 
 (defn expand-predicates-default [predicates]
   (let [expand (expand-predicates predicates predicate-conversions)]
     expand))
+
 
 
 ;;;

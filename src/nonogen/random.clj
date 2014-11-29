@@ -10,12 +10,31 @@
 
 (UUID/randomUUID)
 
+(defn variation [a-coll a-seed]
+  (loop [coll a-coll seed a-seed]
+    (if (not (vector? coll))
+      (if (not (list? coll))
+        coll
+        (into [] (map #(variation % seed) coll)))
+      (recur (first (nonogen.random/shuffle-randomly coll seed)) seed))))
+
 (defn get-random-seed []
   376;(rand 99999999)
   )
 
+(defn die-roll [sides seed]
+  (first (simple/sample (range sides) :seed seed)))
 
-(defn get-seed-from-value [])
+(defn string-to-seed
+  "Takes a string and turns it into a seed value."
+  [string]
+  (hash string))
+
+(defn data-to-seed
+  "Takes a collection and turns it into a seed value."
+  [data]
+  (hash data))
+
 
 (defn shuffle-randomly [to-shuffle seed-source]
   (simple/sample to-shuffle :seed seed-source)

@@ -24,7 +24,7 @@
                 (nights/a-thousand-and-one-nights)
 
                 ))
-    60)))
+    6400)))
 
 Double/POSITIVE_INFINITY
 
@@ -33,7 +33,7 @@ Double/POSITIVE_INFINITY
 
 (defn make-novel []
   (time
-    (spit "texts\\output\\NoNoGen2014-006.markdown"
+    (spit "texts\\output\\NoNoGen2014-007.markdown"
           (apply str (flatten (make-book)))))
   (print "\nDone\n"))
 

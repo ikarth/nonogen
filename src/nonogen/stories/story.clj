@@ -4,6 +4,7 @@
              [nonogen.stories.effects]
              [nonogen.stories.characters]
              [nonogen.random :as random]
+             [nonogen.stories.labyrinth]
              ))
 
 ;;;;;
@@ -114,8 +115,9 @@
                         {:tags {:storyteller "Scheherazade"}})
              {:tags {:event :story-introduction}}))
 
-(defn make-storytelling-story [storyon-lib seed]
-  (let [char-list (nonogen.stories.characters/make-character-list 3 seed)
+(defn make-storytelling-story [storyon-lib story]
+  (let [seed (:seed (:state story))
+        char-list (nonogen.stories.characters/make-character-list 3 seed)
         teller (nonogen.stories.characters/pick-storyteller char-list seed)]
   (make-story {:characters char-list
                :scenes [{:tags {:storyteller teller}}]
@@ -130,6 +132,21 @@
      :scenes [{:tags {:storyteller "Scheherazade" :reality-prime true}}]
      :events [{:tags {:event :story-introduction}}]
      :output []} storyon-lib))
+
+
+(defn make-labyrinth-story [storyon-lib story]
+  (let [seed (:seed (:state story))
+        char-list (nonogen.stories.characters/make-character-list 1 seed)
+        explorer (nonogen.stories.characters/pick-storyteller char-list seed)
+        zip (nonogen.stories.labyrinth/enter-labyrinth story)
+        ]
+  (assoc (add-tag (make-story {:characters char-list
+                                    :scenes []
+                                    :events [{:tags {:event :labyrinth-introduction}}]
+                                    :output []}
+                                   storyon-lib)
+                 {:explorer explorer :labyrinth true})
+    :zip (:zip zip))))
 
 
 

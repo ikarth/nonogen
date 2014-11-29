@@ -64,6 +64,8 @@
                        text (:seed (nonogen.stories.predicates/get-story-tags
                                     story)))))))
 
+
+
 (defn describe-all-characters []
   (fn [story]
     (let [char-desc (map
@@ -90,7 +92,7 @@
   (if (string? data)
     data
     (if (ifn? data)
-      ((data) story)
+        ((data) story)
       data)
     ))
 
@@ -99,6 +101,8 @@
          (map
           (partial parse-one story)
           output-data)))
+
+
 
 ;;;
 ;;; Sketching

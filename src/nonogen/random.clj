@@ -10,14 +10,6 @@
 
 (UUID/randomUUID)
 
-(defn variation [a-coll a-seed]
-  (loop [coll a-coll seed a-seed]
-    (if (not (vector? coll))
-      (if (not (list? coll))
-        coll
-        (into [] (map #(variation % seed) coll)))
-      (recur (first (nonogen.random/shuffle-randomly coll seed)) seed))))
-
 (defn get-random-seed []
   376;(rand 99999999)
   )
@@ -37,8 +29,15 @@
 
 
 (defn shuffle-randomly [to-shuffle seed-source]
-  (simple/sample to-shuffle :seed seed-source)
-  )
+  (simple/sample to-shuffle :seed seed-source))
+
+(defn variation [a-coll a-seed]
+  (loop [coll a-coll seed a-seed]
+    (if (not (vector? coll))
+      (if (not (list? coll))
+        coll
+        (into [] (map #(variation % seed) coll)))
+      (recur (first (nonogen.random/shuffle-randomly coll seed)) seed))))
 
 ;(print (str seed " "))
 ;(print (str (into [] (take 1 (simple/sample [1 2 3 4 5 6 7 8 9 0] :seed seed))) " "))

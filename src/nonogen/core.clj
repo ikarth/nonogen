@@ -15,16 +15,23 @@
 (println "\nRunning...")
 
 
-(defn make-book []
+(defn make-book
+  ([]
   (:output
    (nth
       (iterate gens/process
                (gens/insert
                 (gens/make-generator-stack)
-                (nights/a-thousand-and-one-nights)
-
-                ))
+                (nights/a-thousand-and-one-nights)))
     6400)))
+  ([length seed]
+   (:output
+   (nth
+      (iterate gens/process
+               (gens/insert
+                (gens/make-generator-stack)
+                (nights/a-thousand-and-one-nights seed)))
+    length))))
 
 Double/POSITIVE_INFINITY
 
@@ -33,11 +40,11 @@ Double/POSITIVE_INFINITY
 
 (defn make-novel []
   (time
-    (spit "texts\\output\\NoNoGen2014-007.markdown"
+    (spit "texts\\output\\NoNoGen2014-008.markdown"
           (apply str (flatten (make-book)))))
   (print "\nDone\n"))
 
 (make-novel)
 
 ;(caesium.crypto.generichash/blake2b (.getBytes "Test"))
-(.getBytes "test")
+;(.getBytes "test")

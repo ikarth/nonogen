@@ -104,6 +104,11 @@
   ;(clojure.pprint/pprint story)
   (add-zip story (zip/vector-zip (recursively-convert-to-vectors (:state story)))))
 
+(defn check-for-labyrinth-exit [story]
+  (if (= :end (last (:zip story)))
+    {:labyrinth-exit true}
+    {:labyrinth-exit false}))
+
 (defn explore-labyrinth [story]
   (if (nil? (:zip story))
     (enter-labyrinth story) ; need it to be zipped first!
@@ -133,17 +138,13 @@
 ;(:zip (explore-labyrinth (explore-labyrinth (explore-labyrinth (enter-labyrinth {:state {:seed 0 :tags [:test :one :two]}})))))
 
 
-(defn check-for-labyrinth-exit [story]
-  (if (= :end (last (:zip story)))
-    {:labyrinth-exit true}
-    {:labyrinth-exit false}))
 
 (defn describe-inside-labyrinth [story]
   (display-current-node (:zip story)))
 
 (defn introduce-labyrinth []
   (fn [story] (apply str
-                     (variation
+                     (nonogen.random/variation
                       '(["a vast and perilous " "a mysterious " "an engmatic " "a recursive " "a " "a twilight " "an expansive " "a twisted " "a cybertextual " "an architectural "]
                         ["maze" "labyrinth" "labyrinth" "house of many doors" "library" "dimention in space" "zone" "garden" "data structure" "forest"]
                         [", a place where many had become lost" " from which few emerged" " that had never known the light of the sun" " that contained the entire world" " that was a map of itself" ", which is the world" " with many forking paths" " that lived in eternal twilight" ", the place that can sometimes be glimpsed through mirrors" " that was also this story as I tell it to you" " just on the other side of the garden wall" " that some call the unknown"]

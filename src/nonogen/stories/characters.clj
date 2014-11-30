@@ -20,7 +20,7 @@
    {:name "Murasaki Shikibu" :tags {:stories [] :description "a lady of the Imperial Court" :gender :female :can-tell-stories? true}}
    {:name "Dante Alighieri" :tags {:stories [] :description "a poet exiled from Florence" :gender :male :can-tell-stories? true}}
    {:name "Virgil" :tags {:stories [] :description "a poet of Rome" :gender :male :can-tell-stories? true}}
-   {:name "Jorges Luis Borges" :tags {:stories [] :description "a blind librarian" :gender :male :can-tell-stories? true :blind true}}
+   {:name "Jorge Luis Borges" :tags {:stories [] :description "a blind librarian" :gender :male :can-tell-stories? true :blind true}}
    {:name "Little Nemo" :tags {:stories [] :description "a child trying to go to Slumberland" :gender :male :can-tell-stories? true :blind true}}
    {:name "Socrates" :tags {:stories [] :description "a philosopher" :gender :male :can-tell-stories? true :blind true}}
    ])

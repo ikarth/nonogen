@@ -9,9 +9,11 @@
 
 
 
-(defn a-thousand-and-one-nights []
-  (nonogen.stories.story/make-thousand-nights-story
-   nonogen.stories.storyon-library/example-storyons))
+(defn a-thousand-and-one-nights
+  ([]
+   (nonogen.stories.story/make-thousand-nights-story nonogen.stories.storyon-library/example-storyons))
+  ([seed]
+   (assoc-in (nonogen.stories.story/make-thousand-nights-story nonogen.stories.storyon-library/example-storyons) [:state :seed] seed)))
 
 
 ;(:make-basic-story (nonogen.stories.story/make-make-story nonogen.stories.storyon-library/example-storyons))
@@ -45,14 +47,14 @@
      30)
 
 
- (nth
-      (iterate gens/process
-               (gens/insert
-                (gens/make-generator-stack)
-                (a-thousand-and-one-nights)
-
-                ))
-    600)
+ ;(nth
+ ;     (iterate gens/process
+ ;              (gens/insert
+ ;               (gens/make-generator-stack)
+ ;               (a-thousand-and-one-nights);
+;
+;                ))
+;    600)
 
  ;(clojure.inspector/inspect-tree
 

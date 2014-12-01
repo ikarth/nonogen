@@ -8,10 +8,13 @@ National Novel Generation Month Project 2014
 
 [NaNoGenMo 2014] (https://github.com/dariusk/NaNoGenMo-2014): It started as a joke on Twitter by Darius Kazemi and grew into an entire month of people creating novel-writing generators. This one is mine.
 
+A thread about it's development can be found [here](https://github.com/dariusk/NaNoGenMo-2014/issues/35).
 
 ## Output
 
-The first finished book produced by the generator is "The Infinite Garden of One Thousand and One Stories".
+The first finished book produced by the generator is "The Infinite Garden of One Thousand and One Stories". It has 5,665,188 words, and was generated from a seed of 5.16746766851914E8 and with a running time of 123337.824542 milliseconds.
+
+This configuration of the generator emphasizes recursion and uses its own structure to construct the space that the characters inhabit.
 
 PDF | Markdown | HTML
 ----|----------|-----
@@ -46,6 +49,8 @@ PDF | Markdown | HTML
 [Volume 29 PDF](https://github.com/ikarth/nonogen/blob/master/texts/output/infinite_garden/29-infinite_garden.pdf?raw=true) |  [Volume 29 Markdown](https://raw.githubusercontent.com/ikarth/nonogen/master/texts/output/infinite_garden/29-infinite_garden.markdown) |  [Volume 29 HTML](https://raw.githubusercontent.com/ikarth/nonogen/master/texts/output/infinite_garden/29-infinite_garden.html)
 [Volume 30 PDF](https://github.com/ikarth/nonogen/blob/master/texts/output/infinite_garden/30-infinite_garden.pdf?raw=true) |  [Volume 30 Markdown](https://raw.githubusercontent.com/ikarth/nonogen/master/texts/output/infinite_garden/30-infinite_garden.markdown) |  [Volume 30 HTML](https://raw.githubusercontent.com/ikarth/nonogen/master/texts/output/infinite_garden/30-infinite_garden.html)
 
+And, in imitation of extracting parts of the longer collection and publishing them on their own, here's a 22K word novelette, "Ten Stories by Scheherazade".
+[PDF](https://github.com/ikarth/nonogen/blob/master/texts/output/ten_stories/ten-stories.pdf?raw=true) [Markdown](https://github.com/ikarth/nonogen/blob/master/texts/output/ten_stories/ten-stories.markdown)
 
 ## License
 

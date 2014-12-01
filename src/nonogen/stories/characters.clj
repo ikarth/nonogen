@@ -11,8 +11,8 @@
 
 
 (def prebuilt-characters
-  #{{:name "Shahryar" :tags {:description "a king of Persia" :gender :male}}
-   {:name "Dunyazad" :tags {:description "the sister of Scheherazade" :gender :female}}
+  #{{:name "Shahryar" :tags {:stories [] :description "a king of Persia" :gender :male :can-tell-stories? true}}
+   {:name "Dunyazad" :tags {:stories [] :description "the sister of Scheherazade" :gender :female :can-tell-stories? true}}
    {:name "Scheherazade" :tags {:stories [] :description "a queen of Persia" :gender :female :can-tell-stories? true}}
    {:name "Marco Polo" :tags {:stories [] :description "an explorer of Venice" :gender :male :can-tell-stories? true :curious true}}
    {:name "Kublai Khan" :tags {:stories [] :description "a Khagan of the Ikh Mongol Uls" :gender :male :can-tell-stories? true :curious true}}
@@ -24,7 +24,7 @@
    {:name "Jorge Luis Borges" :tags {:stories [] :description "a blind librarian" :gender :male :can-tell-stories? true :blind true}}
    {:name "Little Nemo" :tags {:stories [] :description "a child trying to go to Slumberland" :gender :male :can-tell-stories? true :blind true}}
    {:name "Socrates" :tags {:stories [] :description "a philosopher" :gender :male :can-tell-stories? true :blind true}}
-   {:name "Asterion" :tags {:stories [] :description "a member of royalty" :gender :male}}
+   {:name "Asterion" :tags {:stories [] :description "a member of royalty" :gender :male :can-tell-stories? true}}
 
    })
 

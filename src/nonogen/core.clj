@@ -3,6 +3,7 @@
              [nonogen.generators :as gens]
              [nonogen.stories.nights :as nights]
              [nonogen.stories.story]
+             [clojure.inspector]
              ;[caesium.crypto.generichash]
              ;[com.github.emboss/siphash-java]
 
@@ -17,13 +18,15 @@
 
 (defn make-book
   ([]
-  (:output
-   (nth
+  (let [book (nth
       (iterate gens/process
                (gens/insert
                 (gens/make-generator-stack)
                 (nights/a-thousand-and-one-nights)))
-    6400)))
+    7000)]
+    (clojure.inspector/inspect-tree book)
+   (:output book
+   )))
   ([length seed]
    (:output
    (nth

@@ -32,7 +32,7 @@
 
 (defn nested-hashes []
   (fn [story]
-    (apply str (into [] (take (nil-to-zero (get-in story [:state :nesting])) (repeat "#"))))
+    (apply str (into [] (take (inc (nil-to-zero (get-in story [:state :nesting]))) (repeat "#"))))
 
     ))
 
@@ -82,7 +82,6 @@
 
 (defn narrator-name []
   (fn [story]
-    (println "narrator-name:"(:narrator (:state story)))
     (let [protagonist (:narrator (:state story))]
       protagonist)))
 

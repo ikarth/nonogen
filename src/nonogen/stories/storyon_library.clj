@@ -27,7 +27,15 @@
 
 (def example-storyons
   [(nonogen.stories.storyon/make-storyon
-   {:predicates [:at-least-one-character [:event :story-introduction]]
+   {:predicates [:at-least-one-character [:event :story-introduction] [:is-tag :reality-prime]]
+    :result [[:output "#The Infinite Garden of One Thousand and One Stories\n\n"]
+             [:output "Once upon a time, there was " ]
+             [:output describe-all-characters ". "]
+             [:pop-event true]
+             [:add-event (story/make-event {:tags {:event :pick-next-scene :singular-selection true}})]
+             ]})
+   (nonogen.stories.storyon/make-storyon
+   {:predicates [:at-least-one-character [:event :story-introduction] [:not-tag :reality-prime]]
     :result [[:output "\n" nested-hashes narrator-name "'s Story\n\n"]
              [:output "Once upon a time, there was " ]
              [:output describe-all-characters ". "]
@@ -81,15 +89,15 @@
   ;           ]})
    (nonogen.stories.storyon/make-storyon
    {:predicates [:current-character-is-storyteller [:event :storytelling-ending] [:not-tag :reality-prime]]
-    :result [[:output "\"And that was how it happened,\" " storyteller-name " said, ending " her " story.\n\n"]
+    :result [[:output "\"And that was how it happened,\" " storyteller-name " said, ending " her " story. "]
+             [:output "\n\n---\n\n"]
              [:pop-event true]
              [:exit :outward]
              ]})
    (nonogen.stories.storyon/make-storyon
    {:predicates [:current-character-is-storyteller [:event :storytelling-ending]]
     :result [[:quality :increment :state :nights]
-             [:output "Then " storyteller-name " ended " her " " nights-count " story, saying, \"But there is another tale which is more marvelous still.\"\n\n"]
-
+             [:output "Thus " storyteller-name " ended " her " " nights-count " story, saying, \"But there is another tale which is more marvelous still.\"\n\n"]
              [:pop-event true]
              [:add-event (story/make-event {:tags {:event :storytelling-beginning :singular-selection true}})]
              [:exit :inplace]
@@ -97,10 +105,10 @@
    (nonogen.stories.storyon/make-storyon
    {:predicates [:current-character-is-storyteller [:event :storytelling-ending] :nights-quality-at-least-1001]
     :result [[:quality :increment :state :nights]
-             [:output "Then " storyteller-name " ended " her " last story, saying, \"And that is my final tale.\"\n\n\n\n                        THE END"]
+             [:output "And so " storyteller-name " ended " her " last story, saying, \"And that is my final tale.\"\n\n\n\n#THE END\n\n\n\n"]
 
              [:pop-event true]
-             [:exit :inplace]
+             [:exit :outward]
              ]})
    ])
 
@@ -165,17 +173,146 @@
              [:pop-event true]
              [:add-event (story/make-event {:tags {:event :new-place :singular-selection true}})]
              ]})
-      (nonogen.stories.storyon/make-storyon
+         (nonogen.stories.storyon/make-storyon
+   {:predicates [[:event :new-place] [:is-tag :labyrinth]  [:not-tag :labyrinth-exit] :current-character-is-explorer]
+    :result [[:output "\n\n" She " entered " (fn [] labyrinth/describe-inside-labyrinth)]
+             [:pop-event true]
+             [:add-event (story/make-event {:tags {:event :wander-labyrinth :singular-selection true}})]
+             ]})
+         (nonogen.stories.storyon/make-storyon
+   {:predicates [[:event :new-place] [:is-tag :labyrinth]  [:not-tag :labyrinth-exit] :current-character-is-explorer]
+    :result [[:output "\n\n" She " entered " (fn [] labyrinth/describe-inside-labyrinth)]
+             [:pop-event true]
+             [:add-event (story/make-event {:tags {:event :wander-labyrinth :singular-selection true}})]
+             ]})
+         (nonogen.stories.storyon/make-storyon
+   {:predicates [[:event :new-place] [:is-tag :labyrinth]  [:not-tag :labyrinth-exit] :current-character-is-explorer]
+    :result [[:output "\n\n" She " entered " (fn [] labyrinth/describe-inside-labyrinth)]
+             [:pop-event true]
+             [:add-event (story/make-event {:tags {:event :wander-labyrinth :singular-selection true}})]
+             ]})
+         (nonogen.stories.storyon/make-storyon
+   {:predicates [[:event :new-place] [:is-tag :labyrinth]  [:not-tag :labyrinth-exit] :current-character-is-explorer]
+    :result [[:output "\n\n" She " entered " (fn [] labyrinth/describe-inside-labyrinth)]
+             [:pop-event true]
+             [:add-event (story/make-event {:tags {:event :wander-labyrinth :singular-selection true}})]
+             ]})
+         (nonogen.stories.storyon/make-storyon
+   {:predicates [[:event :new-place] [:is-tag :labyrinth]  [:not-tag :labyrinth-exit] :current-character-is-explorer]
+    :result [[:output "\n\n" She " entered " (fn [] labyrinth/describe-inside-labyrinth)]
+             [:pop-event true]
+             [:add-event (story/make-event {:tags {:event :wander-labyrinth :singular-selection true}})]
+             ]})
+         (nonogen.stories.storyon/make-storyon
+   {:predicates [[:event :new-place] [:is-tag :labyrinth]  [:not-tag :labyrinth-exit] :current-character-is-explorer]
+    :result [[:output "\n\n" She " entered " (fn [] labyrinth/describe-inside-labyrinth)]
+             [:pop-event true]
+             [:add-event (story/make-event {:tags {:event :wander-labyrinth :singular-selection true}})]
+             ]})
+         (nonogen.stories.storyon/make-storyon
+   {:predicates [[:event :new-place] [:is-tag :labyrinth]  [:not-tag :labyrinth-exit] :current-character-is-explorer]
+    :result [[:output "\n\n" She " entered " (fn [] labyrinth/describe-inside-labyrinth)]
+             [:pop-event true]
+             [:add-event (story/make-event {:tags {:event :wander-labyrinth :singular-selection true}})]
+             ]})
+         (nonogen.stories.storyon/make-storyon
+   {:predicates [[:event :new-place] [:is-tag :labyrinth]  [:not-tag :labyrinth-exit] :current-character-is-explorer]
+    :result [[:output "\n\n" She " entered " (fn [] labyrinth/describe-inside-labyrinth)]
+             [:pop-event true]
+             [:add-event (story/make-event {:tags {:event :wander-labyrinth :singular-selection true}})]
+             ]})
+         (nonogen.stories.storyon/make-storyon
+   {:predicates [[:event :new-place] [:is-tag :labyrinth]  [:not-tag :labyrinth-exit] :current-character-is-explorer]
+    :result [[:output "\n\n" She " entered " (fn [] labyrinth/describe-inside-labyrinth)]
+             [:pop-event true]
+             [:add-event (story/make-event {:tags {:event :wander-labyrinth :singular-selection true}})]
+             ]})
+         (nonogen.stories.storyon/make-storyon
+   {:predicates [[:event :new-place] [:is-tag :labyrinth]  [:not-tag :labyrinth-exit] :current-character-is-explorer]
+    :result [[:output "\n\n" She " entered " (fn [] labyrinth/describe-inside-labyrinth)]
+             [:pop-event true]
+             [:add-event (story/make-event {:tags {:event :wander-labyrinth :singular-selection true}})]
+             ]})
+         (nonogen.stories.storyon/make-storyon
+   {:predicates [[:event :new-place] [:is-tag :labyrinth]  [:not-tag :labyrinth-exit] :current-character-is-explorer]
+    :result [[:output "\n\n" She " entered " (fn [] labyrinth/describe-inside-labyrinth)]
+             [:pop-event true]
+             [:add-event (story/make-event {:tags {:event :wander-labyrinth :singular-selection true}})]
+             ]})
+         (nonogen.stories.storyon/make-storyon
+   {:predicates [[:event :new-place] [:is-tag :labyrinth]  [:not-tag :labyrinth-exit] :current-character-is-explorer]
+    :result [[:output "\n\n" She " entered " (fn [] labyrinth/describe-inside-labyrinth)]
+             [:pop-event true]
+             [:add-event (story/make-event {:tags {:event :wander-labyrinth :singular-selection true}})]
+             ]})
+         (nonogen.stories.storyon/make-storyon
+   {:predicates [[:event :new-place] [:is-tag :labyrinth]  [:not-tag :labyrinth-exit] :current-character-is-explorer]
+    :result [[:output "\n\n" She " entered " (fn [] labyrinth/describe-inside-labyrinth)]
+             [:pop-event true]
+             [:add-event (story/make-event {:tags {:event :wander-labyrinth :singular-selection true}})]
+             ]})
+         (nonogen.stories.storyon/make-storyon
+   {:predicates [[:event :new-place] [:is-tag :labyrinth]  [:not-tag :labyrinth-exit] :current-character-is-explorer]
+    :result [[:output "\n\n" She " entered " (fn [] labyrinth/describe-inside-labyrinth)]
+             [:pop-event true]
+             [:add-event (story/make-event {:tags {:event :wander-labyrinth :singular-selection true}})]
+             ]})
+         (nonogen.stories.storyon/make-storyon
+   {:predicates [[:event :new-place] [:is-tag :labyrinth]  [:not-tag :labyrinth-exit] :current-character-is-explorer]
+    :result [[:output "\n\n" She " entered " (fn [] labyrinth/describe-inside-labyrinth)]
+             [:pop-event true]
+             [:add-event (story/make-event {:tags {:event :wander-labyrinth :singular-selection true}})]
+             ]})
+         (nonogen.stories.storyon/make-storyon
+   {:predicates [[:event :new-place] [:is-tag :labyrinth]  [:not-tag :labyrinth-exit] :current-character-is-explorer]
+    :result [[:output "\n\n" She " entered " (fn [] labyrinth/describe-inside-labyrinth)]
+             [:pop-event true]
+             [:add-event (story/make-event {:tags {:event :wander-labyrinth :singular-selection true}})]
+             ]})
+         (nonogen.stories.storyon/make-storyon
+   {:predicates [[:event :new-place] [:is-tag :labyrinth]  [:not-tag :labyrinth-exit] :current-character-is-explorer]
+    :result [[:output "\n\n" She " entered " (fn [] labyrinth/describe-inside-labyrinth)]
+             [:pop-event true]
+             [:add-event (story/make-event {:tags {:event :wander-labyrinth :singular-selection true}})]
+             ]})
+       (nonogen.stories.storyon/make-storyon
    {:predicates [[:event :new-place] [:is-tag :labyrinth]  [:not-tag :labyrinth-exit] :current-character-is-explorer]
     :result [[:output "\n\n" She " entered " (fn [] labyrinth/describe-inside-labyrinth)]
              [:pop-event true]
              [:add-event (story/make-event {:tags {:event :wander-labyrinth :singular-selection true}})]
              ]})
       (nonogen.stories.storyon/make-storyon
-   {:predicates [[:event :new-place] [:is-tag :labyrinth]  [:not-tag :labyrinth-exit] [:is-tag :labyrinth-explorer] :current-character-is-explorer]
+   {:predicates [[:event :new-place] [:is-tag :labyrinth]  [:not-tag :labyrinth-exit] :current-character-is-explorer]
     :result [[:output "\n\n" She " entered " (fn [] labyrinth/describe-inside-labyrinth)]
              [:output "There was a book here, and " she " opened it and read the following page:\n\n"]
              [:exit-inward (fn [_] (nonogen.borges.babel/make-babel))]
+             [:pop-event true]
+             [:add-event (story/make-event {:tags {:event :close-book :singular-selection true}})]
+             ]})
+   (nonogen.stories.storyon/make-storyon
+   {:predicates [[:event :close-book] [:is-tag :labyrinth]  [:not-tag :labyrinth-exit] :current-character-is-explorer]
+    :result [[:output "\n\"Well,\" " she " said, \""
+              (fn []
+                (fn [story]
+                       (apply str
+                              (nonogen.random/variation
+                               ["That explains a lot"
+                                "That was quite useless"
+                                "It is as confusing as this maze"
+                                "Maybe it's a clue to where the exit is"
+                                "I have an unsettling feeling of déjà vu"
+                                "Perhaps it's a list of names? Or a crossword puzzle that was filled in wrong"
+                                "Somehow, it reminds me of tigers"
+                                ]
+                               (get-in story [:state :seed]))
+                              (nonogen.random/variation [". I hope that it's not important, because I can't read it"
+                                                              "" "" "" "" "" "" ""
+                                                              ", or maybe it was written upside down"
+                                                              ". Perhaps there's a code"
+                                                              ". Maybe it's in a language I don't know"
+                                                              ". Perhaps the book is as infinite and inscrutable as the rest of this place"]
+                               (get-in story [:state :seed])))))
+              ".\"\n\n"]
              [:pop-event true]
              [:add-event (story/make-event {:tags {:event :wander-labyrinth :singular-selection true}})]
              ]})
@@ -196,9 +333,8 @@
              ]})
 
    (nonogen.stories.storyon/make-storyon
-    {:predicates [[:event :encounter-over] [:is-tag :labyrinth]  [:not-tag :labyrinth-exit]]
+    {:predicates [[:event :encounter-over] [:is-tag :labyrinth]  [:not-tag :labyrinth-exit] :current-character-is-explorer]
     :result [[:output "\n\n" She " decided to travel onwards. "]
-             [:add-random-character nil]
              [:remove-scene-characters nil]
              [:remove-scene nil]
              [:pop-event true]
@@ -224,7 +360,8 @@
                        (apply str
                               (nonogen.random/variation [" found the exit" " discovered the way out" " reached the end of the labyrinth"]
                                (get-in story [:state :seed])))))
-              ".\n\n"]
+              ". "]
+             [:output "\n\n---\n\n"]
              [:pop-event true]
              [:exit :outward]
              ]})
@@ -263,8 +400,8 @@
              [:add-event (story/make-event {:tags {:event :storytelling-ending :singular-selection true}})]
              ]})
    (nonogen.stories.storyon/make-storyon
-   {:predicates [:current-character-is-storyteller [:event :storytelling-ending] [:not-tag :reality-prime]]
-    :result [[:output "\"So you see how that story was very like this place,\" " storyteller-name " said, ending " her " story. "]
+   {:predicates [:current-character-is-explorer [:event :storytelling-ending] [:not-tag :reality-prime]]
+    :result [[:output "\"So you see how that story was very like this place,\" " storyteller-name " said, ending the story. "]
              [:remove-scene-characters nil]
              [:pop-event true]
              [:add-event (story/make-event {:tags {:event :encounter-over :singular-selection true}})]

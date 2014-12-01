@@ -29,7 +29,7 @@
      (:tags scene)
      (:tags event)
      (:tags current-character)
-     {:qualities (get-in story [:state :qualities])}
+     (merge {:qualities (get-in story [:state :qualities])} {:qualities (get-in story [:state :qualities])})
      )))
 
 
@@ -68,11 +68,17 @@
 ;;; The actual predicates we're using
 ;;;
 
+(defn nil-to-zero [n]
+  (if (nil? n) 0 n))
+
+
 (def predicate-conversions
   {:current-character-is-storyteller #(= (:storyteller %) (:name (:current-character %)))
    :current-character-is-explorer #(= (:explorer %) (:name (:current-character %)))
    :test :current-character-is-storyteller
-   :nights-quality-at-least-1001 (fn [story] )
+   :nights-quality-at-least-1001 (fn [tags]
+                                   ;(println tags)
+                                   (> (nil-to-zero (:nights (:qualities tags))) 1000))
    ;:storytelling-beginning #(contains? % :storytelling-beginning)
    ;:storytelling-ending #(contains? % :storytelling-ending)
    ;:storytelling-ready-to-tell #(contains? % :storytelling-ready-to-tell)

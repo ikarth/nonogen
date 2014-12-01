@@ -128,7 +128,7 @@
         char-list (nonogen.stories.characters/make-character-list 3 seed)
         teller (nonogen.stories.characters/pick-storyteller char-list seed)
         nesting (inc (if (nil? (:nesting (:state story))) 0 (:nesting (:state story))))
-        narrator (get-in story [:state :tags :storyteller])
+        narrator (:storyteller (:tags (peek (:scenes (:state story)))))
         ]
   (make-story {:characters char-list
                :scenes [{:tags {:storyteller teller}}]
@@ -155,7 +155,7 @@
         explorer (nonogen.stories.characters/pick-storyteller char-list seed)
         zip (nonogen.stories.labyrinth/enter-labyrinth story)
         nesting (inc (if (nil? (:nesting (:state story))) 0 (:nesting (:state story))))
-        narrator (get-in story [:state :tags :storyteller])
+        narrator (:storyteller (:tags (peek (:scenes (:state story)))))
         ]
   (assoc (add-tag (make-story {:characters char-list
                                     :scenes []

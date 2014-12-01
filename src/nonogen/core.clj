@@ -29,7 +29,8 @@
    (:output book
    )))
   ([length]
-   (let [seed (nonogen.random/seed)
+   (let [seed ;5.16746766851914E8
+(nonogen.random/seed)
          book (nth
       (iterate gens/process
                (gens/insert
@@ -48,8 +49,8 @@ Double/POSITIVE_INFINITY
 
 (defn make-novel []
   (time
-    (spit "texts\\output\\NoNoGen2014-009.markdown"
-          (apply str (flatten (make-book 5000000)))))
+    (spit "texts\\output\\NoNoGen2014-013.markdown"
+          (apply str (flatten (make-book 500000)))))
   (print "\nDone\n"))
 
 (make-novel)

@@ -78,7 +78,7 @@
    :test :current-character-is-storyteller
    :nights-quality-at-least-1001 (fn [tags]
                                    ;(println tags)
-                                   (> (nil-to-zero (:nights (:qualities tags))) 1000))
+                                   (> (nil-to-zero (:nights (:qualities tags))) 8))
    ;:storytelling-beginning #(contains? % :storytelling-beginning)
    ;:storytelling-ending #(contains? % :storytelling-ending)
    ;:storytelling-ready-to-tell #(contains? % :storytelling-ready-to-tell)

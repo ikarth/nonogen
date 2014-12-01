@@ -33,8 +33,13 @@
 (defn nested-hashes []
   (fn [story]
     (apply str (into [] (take (inc (nil-to-zero (get-in story [:state :nesting]))) (repeat "#"))))
-
     ))
+
+(defn count-nested-hashes []
+  (fn [story]
+    (nil-to-zero (get-in story [:state :nesting]))
+    ))
+
 
 (defn adjective []
   (fn [story]

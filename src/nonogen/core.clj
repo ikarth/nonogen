@@ -44,6 +44,7 @@ Double/POSITIVE_INFINITY
 
 
 (/ Double/POSITIVE_INFINITY 50000M)
+(/ 5665188M 50000M)
 
 (defn make-novel []
   (time
@@ -55,3 +56,7 @@ Double/POSITIVE_INFINITY
 
 ;(caesium.crypto.generichash/blake2b (.getBytes "Test"))
 ;(.getBytes "test")
+
+;[The Infinite Garden of One Thousand and One Stories]
+;5,665,188 words, with a seed of 5.16746766851914E8 and a running time of 123337.824542 msecs.
+;

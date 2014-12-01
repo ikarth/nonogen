@@ -3,6 +3,7 @@
              [nonogen.random :as random]
              [nonogen.stories.predicates]
              [clojure.string]
+             [inflections.core]
              ))
 
 
@@ -19,10 +20,36 @@
      (let [tags# (nonogen.stories.predicates/get-story-tags story#)]
        (get tags# ~expr))))
 
+(defn nights-count []
+  (fn [story]
+    (let [nc (get-in story [:state :qualities :nights])
+          ncount (if (nil? nc) 0 nc)]
+      (inflections.core/ordinalize ncount)
+      )))
+
+(defn nil-to-zero [n]
+  (if (nil? n) 0 n))
+
+(defn nested-hashes []
+  (fn [story]
+    (apply str (into [] (take (nil-to-zero (get-in story [:state :nesting])) (repeat "#"))))
+
+    ))
+
 (defn storyteller-name []
   (fn [story]
+      ;(println story)
     (:storyteller (get-tags story))
     ))
+
+(defn non-storyteller-name []
+  (fn [story]
+    (let [storyteller (:storyteller (get-tags story))]
+      (:name (first (random/shuffle-randomly (filter #(not (= (:name %) storyteller)) (get-in story [:state :characters]))
+                               (get-in story [:state :seed])))))))
+
+
+
 
 ;(defn storyteller-name [] (wrap-get-tags :storyteller))
 
@@ -53,6 +80,12 @@
     (let [protagonist (:current-character (get-tags story))]
       (:name protagonist))))
 
+(defn narrator-name []
+  (fn [story]
+    (println "narrator-name:"(:narrator (:state story)))
+    (let [protagonist (:narrator (:state story))]
+      protagonist)))
+
 (defn a-current-character-description []
   (fn [story]
     (let [protagonist (:current-character (get-tags story))]
@@ -72,8 +105,8 @@
      (fn [c] (apply str (:description (:tags c)) " named " (:name c)))
        (:characters (:state story)))]
       (if (< (count char-desc) 2)
-        (apply str "there was " (first char-desc))
-        (apply str "there was " (clojure.string/join ", " (butlast char-desc)) " and " (last char-desc))
+        (apply str "" (first char-desc))
+        (apply str "" (clojure.string/join ", " (butlast char-desc)) " and " (last char-desc))
       ))))
 
 

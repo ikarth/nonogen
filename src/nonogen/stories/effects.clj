@@ -2,6 +2,7 @@
   (:require [clojure.pprint]
             [nonogen.stories.output]
             [nonogen.stories.labyrinth :as labyrinth]
+            [nonogen.stories.characters]
             ))
 
 (defn positions [pred coll]
@@ -74,8 +75,18 @@
                     (assoc-in story [:state :tags] (merge {} (get-in story [:state :tags]) thing)))
    :remove-state-tag (defn remove-state-tag [thing]
                        (assoc-in story [:state :tags] (dissoc (get-in story [:state :tags]) thing)))
+   :add-random-character (defn add-random-character [c]
+                            (nonogen.stories.characters/additional-storytelling-character story))
+   :remove-scene-characters (defn remove-scene-characters [_]
+                              (nonogen.stories.characters/remove-scene-characters story))
    :add-event (defn add-event [event]
                 (add-to-story story [:state :events] event))
+   :add-scene (defn add-scene [scene]
+                (let [s (if (ifn? scene) (scene story) scene)]
+                  (add-to-story story [:state :scenes] s)))
+   :remove-scene (defn remove-scene [_]
+                   (if (not (empty? (get-in story [:state :scenes])))
+                     (assoc-in story [:state :scenes] (pop (get-in story [:state :scenes])))))
    :increment (defn increment [_]
                 (assoc story :counter (inc (let [c (:counter story)]
                                              (if (number? c) c 0)
@@ -93,9 +104,11 @@
                     p (case place  ; todo: add qualities to characters and events
                         :scene [:state :scene :qualities qual]
                         :state [:state :qualities qual]
-                        nil)]
+                        nil)
+                    amount (if (nil? (get-in story p)) 0 (get-in story p))
+                    ]
                 (if p
-                  (assoc-in story p (a (get-in story p)))
+                  (assoc-in story p (a amount))
                   )))
    :exit-inward (defn embed-story [substory]
                   (let [sub (if (ifn? substory) (substory story) substory)]

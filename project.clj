@@ -23,6 +23,7 @@
                  ;;[org.clojars.ikarth/libsodium-windows-native-deps "1.0.0"]
                  ;[com.github.emboss/siphash-java "1.0.0-SNAPSHOT"]
                  ;[rhizome "0.2.1"]
+                 [inflections "0.9.13"]
                  ]
   :local-repo "../local-maven" ;uses a local maven repository to save space on my other hard drive
 )

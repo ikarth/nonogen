@@ -29,6 +29,7 @@
      (:tags scene)
      (:tags event)
      (:tags current-character)
+     {:qualities (get-in story [:state :qualities])}
      )))
 
 
@@ -68,8 +69,10 @@
 ;;;
 
 (def predicate-conversions
-  {:current-character-is-storyteller #(= (:storyteller %) (:name (:current-character %))) ;todo: add scenes + :storyteller tag
+  {:current-character-is-storyteller #(= (:storyteller %) (:name (:current-character %)))
+   :current-character-is-explorer #(= (:explorer %) (:name (:current-character %)))
    :test :current-character-is-storyteller
+   :nights-quality-at-least-1001 (fn [story] )
    ;:storytelling-beginning #(contains? % :storytelling-beginning)
    ;:storytelling-ending #(contains? % :storytelling-ending)
    ;:storytelling-ready-to-tell #(contains? % :storytelling-ready-to-tell)

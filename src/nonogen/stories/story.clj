@@ -97,8 +97,14 @@
   event-map)
   ;(merge event-map {:seed 7}));(hash (str event-map))}))
 
+(defn make-storytelling-scene [story]
+  (let [seed (:seed (:state story))
+        char-list (get-in story [:state :characters])
+        teller (nonogen.stories.characters/pick-storyteller char-list seed)]
+    {:tags {:storyteller teller}}))
 
-(defn make-story [{:keys [characters scenes events output depth]} storyon-lib]
+
+(defn make-story [{:keys [characters scenes events output depth nesting narrator]} storyon-lib]
   (gens/make-generator
      {:state {
               :seed (random/get-random-seed)
@@ -106,6 +112,8 @@
               :scenes scenes
               :events events
               :output output
+              :nesting nesting
+              :narrator narrator
               :exit nil}
       :generator (fn [g] (story g storyon-lib))}))
 
@@ -118,11 +126,17 @@
 (defn make-storytelling-story [storyon-lib story]
   (let [seed (:seed (:state story))
         char-list (nonogen.stories.characters/make-character-list 3 seed)
-        teller (nonogen.stories.characters/pick-storyteller char-list seed)]
+        teller (nonogen.stories.characters/pick-storyteller char-list seed)
+        nesting (inc (if (nil? (:nesting (:state story))) 0 (:nesting (:state story))))
+        narrator (get-in story [:state :tags :storyteller])
+        ]
   (make-story {:characters char-list
                :scenes [{:tags {:storyteller teller}}]
                :events [{:tags {:event :story-introduction}}]
-               :output []}
+               :output []
+               :nesting nesting
+               :narrator narrator
+               }
               storyon-lib)))
 
 
@@ -131,6 +145,7 @@
     {:characters (nonogen.stories.characters/make-thousand-nights-character-list)
      :scenes [{:tags {:storyteller "Scheherazade" :reality-prime true}}]
      :events [{:tags {:event :story-introduction}}]
+     :nesting 0
      :output []} storyon-lib))
 
 
@@ -139,11 +154,16 @@
         char-list (nonogen.stories.characters/make-character-list 1 seed)
         explorer (nonogen.stories.characters/pick-storyteller char-list seed)
         zip (nonogen.stories.labyrinth/enter-labyrinth story)
+        nesting (inc (if (nil? (:nesting (:state story))) 0 (:nesting (:state story))))
+        narrator (get-in story [:state :tags :storyteller])
         ]
   (assoc (add-tag (make-story {:characters char-list
                                     :scenes []
                                     :events [{:tags {:event :labyrinth-introduction}}]
-                                    :output []}
+                                    :output []
+                               :nesting nesting
+                               :narrator narrator
+                               }
                                    storyon-lib)
                  {:explorer explorer :labyrinth true})
     :zip (:zip zip))))

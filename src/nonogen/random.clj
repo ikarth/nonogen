@@ -10,6 +10,10 @@
 
 (UUID/randomUUID)
 
+(defn seed []
+  (rand 999999999)
+  )
+
 (defn get-random-seed []
   376;(rand 99999999)
   )

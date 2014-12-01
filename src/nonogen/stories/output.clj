@@ -36,6 +36,12 @@
 
     ))
 
+(defn adjective []
+  (fn [story]
+    (first (random/shuffle-randomly ["exciting" "thrilling" "moving" "touching" "interesting" "important" "symbolic" "contemplative" "amusing" "convoluted" "complex" "recursive" "intertwined" "instructive" "inspiring"]
+                               (get-in story [:state :seed])))
+    ))
+
 (defn storyteller-name []
   (fn [story]
       ;(println story)

@@ -25,7 +25,7 @@
    {:name "Little Nemo" :tags {:stories [] :description "a child trying to go to Slumberland" :gender :male :can-tell-stories? true :blind true}}
    {:name "Socrates" :tags {:stories [] :description "a philosopher" :gender :male :can-tell-stories? true :blind true}}
    {:name "Asterion" :tags {:stories [] :description "a member of royalty" :gender :male :can-tell-stories? true}}
-
+   {:name "Alice" :tags {:stories [] :description "a young English girl" :gender :female :can-tell-stories? true}}
    })
 
 (defn make-character-list [how-many seed]
